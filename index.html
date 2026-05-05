@@ -812,10 +812,156 @@ footer{background:var(--blue-dark);color:rgba(255,255,255,.68);padding:44px 0 22
   <i class="fas fa-chevron-up"></i>
 </button>
 
+<!-- ===================== DATA LOADER (reads from admin panel localStorage) ===================== -->
+<script>
+(function(){
+  const raw = localStorage.getItem('sc_data');
+  if(!raw) return; // no admin data yet — use HTML defaults
+  const D = JSON.parse(raw);
+  window.SC = D; // expose for WA number use below
+
+  /* ---- Helpers ---- */
+  function q(sel){ return document.querySelector(sel); }
+  function qa(sel){ return document.querySelectorAll(sel); }
+  function setText(sel, val){ const el=q(sel); if(el&&val) el.textContent=val; }
+  function setHTML(sel, val){ const el=q(sel); if(el&&val) el.innerHTML=val; }
+  function setHref(sel, val){ const el=q(sel); if(el&&val) el.href=val; }
+
+  /* ---- Contact / General ---- */
+  if(D.whatsapp){
+    const waMsg1 = encodeURIComponent('السلام عليكم، أريد الاستفسار عن خدمات Solution Chantier');
+    const waMsg2 = encodeURIComponent('السلام عليكم، أريد الاستفسار عن Solution Chantier');
+    // big whatsapp button
+    const waBtn = q('.wa-big');
+    if(waBtn) waBtn.href = `https://wa.me/${D.whatsapp}?text=${waMsg1}`;
+    // float button
+    const waFloat = q('.wa-float');
+    if(waFloat) waFloat.href = `https://wa.me/${D.whatsapp}?text=${waMsg2}`;
+    // footer social
+    qa('.soc-link').forEach(l => { if(l.querySelector('.fa-whatsapp')) l.href=`https://wa.me/${D.whatsapp}`; });
+    // big button phone display
+    if(waBtn){ const d=waBtn.querySelector('div>div:last-child'); if(d) d.textContent=`WhatsApp — ${D.phone||D.whatsapp}`; }
+  }
+  if(D.phone){
+    // phone contact card
+    const phLink = q('a[href^="tel:"]');
+    if(phLink){ phLink.textContent=D.phone; phLink.href=`tel:${D.phone.replace(/\s/g,'')}`; }
+  }
+  if(D.facebook){
+    qa('a[href*="facebook.com"]').forEach(a => a.href = D.facebook);
+  }
+  if(D.address){
+    // find address card text
+    qa('.c-text').forEach(ct => {
+      if(ct.previousElementSibling && ct.previousElementSibling.querySelector('.fa-map-marker-alt'))
+        ct.querySelector('p').textContent = D.address;
+    });
+  }
+  if(D.hours){
+    qa('.c-text').forEach(ct => {
+      if(ct.previousElementSibling && ct.previousElementSibling.querySelector('.fa-clock')){
+        const p=ct.querySelector('p'); if(p) p.innerHTML=D.hours;
+      }
+    });
+  }
+  if(D.mapurl){
+    const iframe = q('.map-box iframe');
+    if(iframe) iframe.src = D.mapurl;
+  }
+
+  /* ---- Hero ---- */
+  if(D.hero){
+    setText('.hero-tag-ar', D.hero.tagAr);
+    setText('.hero-tag-fr', D.hero.tagFr);
+    if(D.hero.s1){ const el=q('.h-stat:nth-child(1) .num'); if(el){ el.dataset.target=D.hero.s1; el.textContent=0; } }
+    if(D.hero.s2){ const el=q('.h-stat:nth-child(2) .num'); if(el){ el.dataset.target=D.hero.s2; el.textContent=0; } }
+    if(D.hero.s3){ const el=q('.h-stat:nth-child(3) .num'); if(el){ el.dataset.target=D.hero.s3; el.textContent=0; } }
+  }
+
+  /* ---- Services ---- */
+  if(D.services && D.services.length){
+    const grid = q('#services .srv-grid');
+    if(grid){
+      grid.innerHTML = D.services.map((s,i) => `
+        <div class="srv-card fade-up" style="transition-delay:${i*0.08}s">
+          <div class="srv-icon"><i class="${s.icon||'fas fa-tools'}"></i></div>
+          <h3>${s.titleAr||''}<br><small style="font-weight:400;color:var(--gray-text);font-size:.8rem">${s.titleFr||''}</small></h3>
+          <p>${s.descAr||''}</p>
+          <div class="srv-tag">${s.tag||''}</div>
+        </div>`).join('');
+    }
+  }
+
+  /* ---- Products ---- */
+  if(D.products && D.products.length){
+    const grid = q('#products .prod-grid');
+    if(grid){
+      grid.innerHTML = D.products.map((p,i) => `
+        <div class="prod-card fade-up" style="transition-delay:${i*0.1}s">
+          <div class="prod-img" style="background:${p.bg||'var(--blue-mid)'}">
+            <span style="font-size:4.5rem">${p.emoji||'📦'}</span>
+            ${p.badge ? `<div class="prod-badge">${p.badge}</div>` : ''}
+          </div>
+          <div class="prod-body">
+            <h3>${p.titleAr||''}<br><small style="font-weight:400;color:var(--gray-text)">${p.titleFr||''}</small></h3>
+            <p class="use">${p.useAr||''}</p>
+            <a href="#" onclick="askProd('${(p.titleAr||'').replace(/'/g,'\\\'')},event)" class="btn btn-orange">
+              <i class="fab fa-whatsapp"></i> اسأل عن المنتج / Demander
+            </a>
+          </div>
+        </div>`).join('');
+    }
+  }
+
+  /* ---- Gallery ---- */
+  if(D.gallery && D.gallery.length){
+    const grid = q('#gGrid');
+    if(grid){
+      const catCls = {crack:'c-crack',hum:'c-hum',con:'c-con',wall:'c-wall'};
+      const catLabel = {crack:'شقوق / Fissures',hum:'رطوبة / Humidité',con:'خرسانة / Béton',wall:'جدران / Murs'};
+      grid.innerHTML = D.gallery.map(g => `
+        <div class="g-card show" data-cat="${g.cat||'crack'}">
+          <div class="ba">
+            <div class="ba-side"><img src="${g.img1||''}" alt="قبل"><span class="ba-lbl">قبل / Avant</span></div>
+            <div class="ba-line"></div>
+            <div class="ba-side"><img src="${g.img2||''}" alt="بعد"><span class="ba-lbl after">بعد / Après</span></div>
+          </div>
+          <div class="g-info">
+            <h4>${g.titleAr||''} / ${g.titleFr||''}</h4>
+            <p>${g.descAr||''} / ${g.descFr||''}</p>
+            <span class="cat-badge ${catCls[g.cat]||''}">${catLabel[g.cat]||g.cat}</span>
+          </div>
+        </div>`).join('');
+    }
+  }
+
+  /* ---- Trust items ---- */
+  if(D.trust && D.trust.length){
+    const grid = q('#trust .trust-grid');
+    if(grid){
+      grid.innerHTML = D.trust.map((t,i) => `
+        <div class="t-item fade-up" style="transition-delay:${i*0.1}s">
+          <div class="t-icon"><i class="${t.icon||'fas fa-star'}"></i></div>
+          <h3>${t.titleAr||''}<br><small style="font-weight:400;font-size:.8em;opacity:.7">${t.titleFr||''}</small></h3>
+          <p>${t.descAr||''}</p>
+        </div>`).join('');
+    }
+  }
+
+  /* ---- Counters ---- */
+  if(D.counters && D.counters.length){
+    qa('#trust .ctr').forEach((el, i) => {
+      if(D.counters[i] !== undefined){ el.dataset.t = D.counters[i]; el.textContent = 0; }
+    });
+  }
+
+})();
+</script>
+
 <!-- ===================== SCRIPTS ===================== -->
 <script>
-/* ---- CONFIG: Replace with real WhatsApp number ---- */
-const WA = '213XXXXXXXXX'; // e.g. 213550123456
+/* ---- CONFIG: reads from admin localStorage if available ---- */
+const WA = (window.SC && window.SC.whatsapp) || '213XXXXXXXXX';
 
 /* ---- Navbar + Scroll Top ---- */
 const nav = document.getElementById('navbar');
