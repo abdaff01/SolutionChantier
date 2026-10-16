@@ -96,9 +96,6 @@ html:not([lang=ar]) .card small{text-transform:uppercase;letter-spacing:.08em}
 .card .val{font-size:1.1rem;font-weight:700;color:var(--navy);word-break:break-word}
 .card p.hint{color:var(--muted);font-size:.9rem;margin-top:6px;font-weight:400}
 .card .actions{display:flex;gap:10px;flex-wrap:wrap;margin-top:12px}
-.soc-row{display:flex;gap:10px;margin-top:6px}
-.soc-row a{width:42px;height:42px;border-radius:50%;color:#fff;display:grid;place-items:center;font-size:1.05rem;transition:transform .2s,filter .2s}
-.soc-row a:hover{transform:translateY(-3px);filter:brightness(1.1)}
 .map{border-radius:var(--r);overflow:hidden;box-shadow:var(--shadow);min-height:320px;margin-bottom:24px}
 .map iframe{width:100%;height:100%;min-height:320px;border:0}
 .qr-card{background:#fff;border-radius:var(--r);box-shadow:var(--shadow);padding:30px;text-align:center}
@@ -106,6 +103,9 @@ html:not([lang=ar]) .card small{text-transform:uppercase;letter-spacing:.08em}
 .qr-card p{color:var(--muted);font-size:.9rem}
 
 footer{background:var(--navy-2);color:rgba(255,255,255,.6);text-align:center;padding:26px 0;font-size:.85rem}
+
+.toast{position:fixed;left:50%;bottom:26px;transform:translate(-50%,16px);background:var(--navy);color:#fff;padding:12px 22px;border-radius:999px;font-weight:700;font-size:.9rem;box-shadow:0 10px 30px rgba(0,0,0,.3);opacity:0;pointer-events:none;transition:opacity .25s,transform .25s;z-index:80}
+.toast.show{opacity:1;transform:translate(-50%,0)}
 
 @media (max-width:720px){
   .cards{grid-template-columns:1fr}
@@ -168,7 +168,7 @@ footer{background:var(--navy-2);color:rgba(255,255,255,.6);text-align:center;pad
       <a class="chan" data-tt href="#" target="_blank" rel="noopener">
         <span class="ic tt"><i class="fab fa-tiktok"></i></span><span>TikTok</span>
       </a>
-      <a class="chan" id="saveContact" href="#" download="Solution-Chantier.vcf">
+      <a class="chan" id="saveContact" href="#" type="text/vcard" download="Solutions-Chantier.vcf">
         <span class="ic save"><i class="fas fa-address-book"></i></span><span data-i18n="c_save"></span>
       </a>
     </div>
@@ -205,10 +205,10 @@ footer{background:var(--navy-2);color:rgba(255,255,255,.6);text-align:center;pad
       <div class="card">
         <span class="ic fb" style="background:linear-gradient(135deg,var(--c-fb),var(--tt))"><i class="fas fa-share-nodes"></i></span>
         <div class="body">
-          <small data-i18n="c_social_l"></small>
-          <div class="soc-row">
-            <a data-fb href="#" target="_blank" rel="noopener" aria-label="Facebook" style="background:var(--c-fb)"><i class="fab fa-facebook-f"></i></a>
-            <a data-tt href="#" target="_blank" rel="noopener" aria-label="TikTok" style="background:var(--tt)"><i class="fab fa-tiktok"></i></a>
+          <small data-i18n="c_share_l"></small>
+          <div class="actions">
+            <a id="shareFb" class="btn btn-sm" href="#" target="_blank" rel="noopener" style="background:var(--c-fb);color:#fff"><i class="fab fa-facebook-f"></i><span data-i18n="c_share_fb"></span></a>
+            <a id="shareMore" class="btn btn-sm" href="#" style="background:var(--tt);color:#fff"><i class="fab fa-tiktok"></i><span data-i18n="c_share_more"></span></a>
           </div>
         </div>
       </div>
@@ -256,11 +256,14 @@ function vcardText(){
     'END:VCARD'
   ].join('\r\n');
 }
+const isMobile=/iPad|iPhone|iPod|Android/i.test(navigator.userAgent)&&!window.MSStream;
 function refreshVcard(){
   const a=$('#saveContact'); if(!a) return;
   if(vcardUrl) URL.revokeObjectURL(vcardUrl);
   vcardUrl=URL.createObjectURL(new Blob([vcardText()],{type:'text/vcard;charset=utf-8'}));
   a.href=vcardUrl;
+  if(isMobile) a.removeAttribute('download');
+  else a.setAttribute('download','Solutions-Chantier.vcf');
 }
 
 function apply(){
@@ -280,8 +283,26 @@ function apply(){
   $('#dir').href=`https://www.google.com/maps/search/?api=1&query=${q}`;
   $('#mapf').src=`https://www.google.com/maps?q=${q}&hl=${L}&output=embed`;
   refreshVcard();
+  const pageUrl=location.href.split('#')[0];
+  $('#shareFb').href=`https://www.facebook.com/sharer/sharer.php?u=${encodeURIComponent(pageUrl)}&quote=${encodeURIComponent(T('c_title'))}`;
   try{ localStorage.setItem('sc_lang',L); }catch(e){}
 }
+function toast(msg){
+  let t=$('#toast');
+  if(!t){ t=document.createElement('div'); t.id='toast'; t.className='toast'; document.body.append(t); }
+  t.textContent=msg; t.classList.add('show');
+  clearTimeout(toast._h); toast._h=setTimeout(()=>t.classList.remove('show'),2200);
+}
+$('#shareMore').addEventListener('click', async e=>{
+  e.preventDefault();
+  const pageUrl=location.href.split('#')[0];
+  if(navigator.share){
+    try{ await navigator.share({ title:T('c_title'), url:pageUrl }); }catch(err){}
+  } else {
+    try{ await navigator.clipboard.writeText(pageUrl); toast(T('c_share_copied')); }
+    catch(err){ prompt(T('c_share_more'), pageUrl); }
+  }
+});
 function setLang(code){
   if(!LANGS.includes(code)||code===L) return;
   document.body.classList.add('swap');
