@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Solution Chantier — Admin</title>
+<title>Solutions Chantier — Admin</title>
 <script src="content.js"></script>
 <style>
 *{box-sizing:border-box}
@@ -63,7 +63,7 @@ p.note{font-size:.92rem;margin:0 0 8px}
 </head>
 <body>
 <aside>
-  <h2>Solution Chantier</h2>
+  <h2>Solutions Chantier</h2>
   <button class="nv" data-v="overview">Overview</button>
   <button class="nv" data-v="contact">Contact &amp; address</button>
   <button class="nv" data-v="images">Images</button>
@@ -305,7 +305,7 @@ function render(){
 }
 
 function fileText(){
-  return `/* Solution Chantier — site content. Edit with admin.html, then replace this file and push. */\nwindow.SC_CONTENT = ${JSON.stringify(W,null,2)};\n`;
+  return `/* Solutions Chantier — site content. Edit with admin.html, then replace this file and push. */\nwindow.SC_CONTENT = ${JSON.stringify(W,null,2)};\n`;
 }
 function download(){
   const url=URL.createObjectURL(new Blob([fileText()],{type:'text/javascript;charset=utf-8'}));

@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Solution Chantier</title>
+<title>Solutions Chantier</title>
 <meta name="description" content="">
 <meta name="theme-color" content="#15233f">
 <link rel="icon" href="images/logo.jpg">
@@ -120,8 +120,8 @@ footer{background:var(--navy-2);color:rgba(255,255,255,.6);text-align:center;pad
 <header class="hdr">
   <div class="wrap">
     <a class="brand" href="index.html">
-      <img class="logo" data-img="logo" src="images/logo.jpg" alt="Solution Chantier">
-      <span><b>Solution Chantier</b><small data-i18n="brand_sub"></small></span>
+      <img class="logo" data-img="logo" src="images/logo.jpg" alt="Solutions Chantier">
+      <span><b>Solutions Chantier</b><small data-i18n="brand_sub"></small></span>
     </a>
     <a class="back" href="index.html"><i class="fas fa-arrow-right"></i><span data-i18n="c_back"></span></a>
     <div class="hdr-actions">
@@ -142,7 +142,7 @@ footer{background:var(--navy-2);color:rgba(255,255,255,.6);text-align:center;pad
 
 <section class="hero">
   <div class="wrap hero-inner">
-    <img class="logo-big" data-img="logo" src="images/logo.jpg" alt="Solution Chantier">
+    <img class="logo-big" data-img="logo" src="images/logo.jpg" alt="Solutions Chantier">
     <h1 data-i18n="c_title"></h1>
     <p data-i18n="c_sub"></p>
   </div>
@@ -222,7 +222,7 @@ footer{background:var(--navy-2);color:rgba(255,255,255,.6);text-align:center;pad
     </div>
 
     <div class="map">
-      <iframe id="mapf" title="Solution Chantier" loading="lazy" referrerpolicy="no-referrer-when-downgrade" allowfullscreen></iframe>
+      <iframe id="mapf" title="Solutions Chantier" loading="lazy" referrerpolicy="no-referrer-when-downgrade" allowfullscreen></iframe>
     </div>
 
     <div class="qr-card">
@@ -247,7 +247,7 @@ function vcardText(){
   const addr=(C.contact.address[L]||'').replace(/[\r\n]+/g,' ');
   return [
     'BEGIN:VCARD','VERSION:3.0',
-    'N:;Solution Chantier;;;','FN:Solution Chantier','ORG:Solution Chantier',
+    'N:;Solutions Chantier;;;','FN:Solutions Chantier','ORG:Solutions Chantier',
     'TEL;TYPE=CELL,VOICE:'+C.contact.tel,
     'EMAIL;TYPE=INTERNET:'+C.contact.email,
     'ADR;TYPE=WORK:;;'+addr+';;;;',
@@ -265,7 +265,7 @@ function refreshVcard(){
 
 function apply(){
   const h=document.documentElement; h.lang=L; h.dir=L==='ar'?'rtl':'ltr';
-  document.title=T('c_title')+' — Solution Chantier';
+  document.title=T('c_title')+' — Solutions Chantier';
   $('.back').setAttribute('aria-label',T('c_back'));
   $$('[data-i18n]').forEach(e=>e.textContent=T(e.dataset.i18n));
   $$('.lang').forEach(b=>b.setAttribute('aria-pressed',b.dataset.lang===L));

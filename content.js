@@ -1,4 +1,4 @@
-/* Solution Chantier — site content. Edit with admin.html, then replace this file and push. */
+/* Solutions Chantier — site content. Edit with admin.html, then replace this file and push. */
 window.SC_CONTENT = {
   contact: {
     phone: "+213 668 83 41 93",
@@ -24,8 +24,8 @@ window.SC_CONTENT = {
   },
   brandChips: ["Granitex", "Sika", "Pigma Color", "Dilmi Paint", "HM DZ"],
   texts: {
-    meta_title: { ar: "Solution Chantier — متجر مواد البناء في أدرار، الجزائر", fr: "Solution Chantier — Magasin de matériaux de construction à Adrar, Algérie", en: "Solution Chantier — Building materials store in Adrar, Algeria" },
-    meta_desc: { ar: "Solution Chantier متجر مستقل لمواد البناء في أدرار: عزل الرطوبة، ترميم الخرسانة وتقويتها، الإيبوكسي، المضافات وغيرها من عدة علامات تجارية.", fr: "Solution Chantier est un magasin indépendant de matériaux de construction à Adrar : étanchéité, réparation et renforcement du béton, époxy, adjuvants et plus, de plusieurs marques.", en: "Solution Chantier is an independent building materials store in Adrar: moisture insulation, concrete repair and strengthening, epoxy, admixtures and more, from several brands." },
+    meta_title: { ar: "Solutions Chantier — متجر مواد البناء في أدرار، الجزائر", fr: "Solutions Chantier — Magasin de matériaux de construction à Adrar, Algérie", en: "Solutions Chantier — Building materials store in Adrar, Algeria" },
+    meta_desc: { ar: "Solutions Chantier متجر مستقل لمواد البناء في أدرار: عزل الرطوبة، ترميم الخرسانة وتقويتها، الإيبوكسي، المضافات وغيرها من عدة علامات تجارية.", fr: "Solutions Chantier est un magasin indépendant de matériaux de construction à Adrar : étanchéité, réparation et renforcement du béton, époxy, adjuvants et plus, de plusieurs marques.", en: "Solutions Chantier is an independent building materials store in Adrar: moisture insulation, concrete repair and strengthening, epoxy, admixtures and more, from several brands." },
     brand_sub: { ar: "مواد البناء · أدرار", fr: "Matériaux de construction · Adrar", en: "Building materials · Adrar" },
     nav_problems: { ar: "الحلول", fr: "Solutions", en: "Solutions" },
     nav_products: { ar: "المنتجات", fr: "Produits", en: "Products" },
@@ -40,7 +40,7 @@ window.SC_CONTENT = {
     hero_cta1: { ar: "اسأل عبر واتساب", fr: "Écrire sur WhatsApp", en: "Ask on WhatsApp" },
     hero_cta2: { ar: "زوروا المتجر", fr: "Venir au magasin", en: "Visit the store" },
     hero_badge: { ar: "أدرار، الجزائر", fr: "Adrar, Algérie", en: "Adrar, Algeria" },
-    hero_alt: { ar: "واجهة متجر Solution Chantier في أدرار", fr: "Façade du magasin Solution Chantier à Adrar", en: "Solution Chantier storefront in Adrar" },
+    hero_alt: { ar: "واجهة متجر Solutions Chantier في أدرار", fr: "Façade du magasin Solutions Chantier à Adrar", en: "Solutions Chantier storefront in Adrar" },
     tk1: { ar: "عزل الرطوبة", fr: "Étanchéité", en: "Moisture insulation" },
     tk2: { ar: "ترميم الخرسانة", fr: "Réparation du béton", en: "Concrete repair" },
     tk3: { ar: "تقوية الخرسانة", fr: "Renforcement du béton", en: "Concrete strengthening" },
@@ -68,7 +68,7 @@ window.SC_CONTENT = {
     p_btn: { ar: "اسأل عن السعر والتوفر", fr: "Demander prix et disponibilité", en: "Ask price & availability" },
     b_eyebrow: { ar: "رفوف المتجر", fr: "Nos rayons", en: "Our shelves" },
     b_title: { ar: "عدة علامات تجارية في متجر واحد", fr: "Plusieurs marques, un seul magasin", en: "More brands, one store" },
-    b_note: { ar: "Solution Chantier متجر مستقل. نعيد بيع منتجات من علامات تجارية مختلفة، ولا نمثّل أيًّا منها.", fr: "Solution Chantier est un magasin indépendant. Nous revendons des produits de différentes marques et n'en représentons aucune.", en: "Solution Chantier is an independent store. We resell products from different brands and do not represent any of them." },
+    b_note: { ar: "Solutions Chantier متجر مستقل. نعيد بيع منتجات من علامات تجارية مختلفة، ولا نمثّل أيًّا منها.", fr: "Solutions Chantier est un magasin indépendant. Nous revendons des produits de différentes marques et n'en représentons aucune.", en: "Solutions Chantier is an independent store. We resell products from different brands and do not represent any of them." },
     b_more: { ar: "وغيرها", fr: "et d'autres", en: "and more" },
     b_btn: { ar: "اسأل عن التوفر", fr: "Demander la disponibilité", en: "Ask about availability" },
     h_eyebrow: { ar: "استشارة", fr: "Conseil", en: "Advice" },
@@ -106,7 +106,7 @@ window.SC_CONTENT = {
     v_call: { ar: "اتصل بنا", fr: "Appeler", en: "Call us" },
     v_dir: { ar: "الاتجاهات", fr: "Itinéraire", en: "Directions" },
     c_title: { ar: "تواصل معنا", fr: "Contactez-nous", en: "Contact us" },
-    c_sub: { ar: "كل طرق التواصل مع Solution Chantier في مكان واحد.", fr: "Tous les moyens de contacter Solution Chantier au même endroit.", en: "All the ways to reach Solution Chantier, in one place." },
+    c_sub: { ar: "كل طرق التواصل مع Solutions Chantier في مكان واحد.", fr: "Tous les moyens de contacter Solutions Chantier au même endroit.", en: "All the ways to reach Solutions Chantier, in one place." },
     c_email_l: { ar: "البريد الإلكتروني", fr: "E-mail", en: "Email" },
     c_social_l: { ar: "تابعونا", fr: "Suivez-nous", en: "Follow us" },
     c_hours_l: { ar: "أيام الفتح", fr: "Jours d'ouverture", en: "Open days" },
@@ -114,8 +114,8 @@ window.SC_CONTENT = {
     c_back: { ar: "العودة إلى الموقع", fr: "Retour au site", en: "Back to the site" },
     c_scan: { ar: "امسح للوصول إلى هذه الصفحة", fr: "Scannez pour accéder à cette page", en: "Scan to open this page" },
     c_save: { ar: "حفظ كجهة اتصال", fr: "Enregistrer le contact", en: "Save contact" },
-    ft_note: { ar: "Solution Chantier متجر مستقل ولا يمثّل أي علامة تجارية. أسماء العلامات وصور المنتجات ملك لأصحابها.", fr: "Solution Chantier est un magasin indépendant et ne représente aucune marque. Les noms de marques et les images de produits appartiennent à leurs propriétaires.", en: "Solution Chantier is an independent store and does not represent any brand. Brand names and product images belong to their owners." },
-    ft_rights: { ar: "© 2026 Solution Chantier، أدرار. جميع الحقوق محفوظة.", fr: "© 2026 Solution Chantier, Adrar. Tous droits réservés.", en: "© 2026 Solution Chantier, Adrar. All rights reserved." },
+    ft_note: { ar: "Solutions Chantier متجر مستقل ولا يمثّل أي علامة تجارية. أسماء العلامات وصور المنتجات ملك لأصحابها.", fr: "Solutions Chantier est un magasin indépendant et ne représente aucune marque. Les noms de marques et les images de produits appartiennent à leurs propriétaires.", en: "Solutions Chantier is an independent store and does not represent any brand. Brand names and product images belong to their owners." },
+    ft_rights: { ar: "© 2026 Solutions Chantier، أدرار. جميع الحقوق محفوظة.", fr: "© 2026 Solutions Chantier, Adrar. Tous droits réservés.", en: "© 2026 Solutions Chantier, Adrar. All rights reserved." },
     ft_top: { ar: "العودة إلى الأعلى", fr: "Retour en haut", en: "Back to top" },
     msg_generic: { ar: "السلام عليكم، أريد الاستفسار عن منتجاتكم.", fr: "Bonjour, je voudrais des renseignements sur vos produits.", en: "Hello, I would like some information about your products." },
     msg_ask: { ar: "السلام عليكم، أريد معرفة سعر {name} وهل هو متوفر؟", fr: "Bonjour, je voudrais connaître le prix et la disponibilité de {name}.", en: "Hello, I'd like to know the price and availability of {name}." },
