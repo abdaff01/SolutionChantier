@@ -1,994 +1,348 @@
 <!DOCTYPE html>
-<html lang="ar" dir="rtl">
+<html lang="en">
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>لوحة تحكم — Solution Chantier Admin</title>
-<link rel="preconnect" href="https://fonts.googleapis.com">
-<link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700;900&family=Roboto:wght@400;500;700&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+<title>Solution Chantier — Admin</title>
+<script src="content.js"></script>
 <style>
-*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
-:root{
-  --blue:#0d1b3e;
-  --blue-mid:#1a2f6e;
-  --blue-light:#2454a6;
-  --orange:#f5a623;
-  --orange-d:#d4880a;
-  --white:#fff;
-  --gray:#f4f6fb;
-  --gray-b:#e2e6f0;
-  --gray-t:#6b7491;
-  --green:#22c55e;
-  --red:#ef4444;
-  --radius:10px;
-  --shadow:0 2px 16px rgba(13,27,62,.1);
-  --sidebar:260px;
-}
-body{font-family:'Cairo','Roboto',sans-serif;background:var(--gray);color:var(--blue);min-height:100vh;overflow-x:hidden}
-
-/* ===== LOGIN ===== */
-#loginScreen{
-  position:fixed;inset:0;background:linear-gradient(135deg,var(--blue),var(--blue-mid));
-  display:flex;align-items:center;justify-content:center;z-index:9999;
-}
-.login-box{
-  background:var(--white);border-radius:20px;padding:44px 40px;width:380px;
-  box-shadow:0 20px 60px rgba(0,0,0,.35);text-align:center;
-}
-.login-logo{
-  width:80px;height:80px;background:var(--blue);border-radius:16px;
-  display:flex;align-items:center;justify-content:center;margin:0 auto 18px;
-  font-size:2rem;font-weight:900;color:var(--orange);
-}
-.login-box h2{font-size:1.4rem;font-weight:900;margin-bottom:4px}
-.login-box p{font-size:.85rem;color:var(--gray-t);margin-bottom:28px}
-.login-box input{
-  width:100%;border:2px solid var(--gray-b);border-radius:10px;
-  padding:12px 16px;font-family:'Cairo',sans-serif;font-size:.95rem;
-  outline:none;transition:.25s;background:var(--gray);margin-bottom:14px;
-}
-.login-box input:focus{border-color:var(--blue-light);background:#fff}
-.login-box .err{color:var(--red);font-size:.83rem;margin-bottom:10px;display:none}
-.login-box button{
-  width:100%;background:var(--orange);color:var(--blue);border:none;border-radius:10px;
-  padding:13px;font-family:'Cairo',sans-serif;font-size:1rem;font-weight:700;
-  cursor:pointer;transition:.25s;
-}
-.login-box button:hover{background:var(--orange-d)}
-
-/* ===== LAYOUT ===== */
-#app{display:none;min-height:100vh}
-
-.sidebar{
-  position:fixed;top:0;right:0;bottom:0;width:var(--sidebar);
-  background:var(--blue);z-index:100;display:flex;flex-direction:column;
-  overflow-y:auto;
-}
-.sb-logo{
-  display:flex;align-items:center;gap:12px;padding:22px 20px 18px;
-  border-bottom:1px solid rgba(255,255,255,.08);
-}
-.sb-logo-icon{
-  width:40px;height:40px;background:var(--orange);border-radius:10px;
-  display:flex;align-items:center;justify-content:center;
-  font-size:1.1rem;font-weight:900;color:var(--blue);flex-shrink:0;
-}
-.sb-logo-text{color:#fff;font-size:.92rem;font-weight:700;line-height:1.3}
-.sb-logo-text small{color:rgba(255,255,255,.5);font-size:.7rem;display:block;font-weight:400}
-
-.sb-nav{flex:1;padding:14px 0}
-.sb-nav-group{margin-bottom:6px}
-.sb-nav-label{
-  font-size:.7rem;font-weight:700;color:rgba(255,255,255,.35);
-  text-transform:uppercase;letter-spacing:.08em;padding:6px 20px 4px;
-}
-.sb-link{
-  display:flex;align-items:center;gap:12px;padding:11px 20px;
-  color:rgba(255,255,255,.65);font-size:.88rem;font-weight:600;
-  cursor:pointer;transition:.2s;border:none;background:none;width:100%;text-align:right;
-  border-right:3px solid transparent;
-}
-.sb-link i{width:18px;text-align:center;font-size:.9rem}
-.sb-link:hover{color:#fff;background:rgba(255,255,255,.06)}
-.sb-link.active{color:var(--orange);background:rgba(245,166,35,.1);border-right-color:var(--orange)}
-
-.sb-footer{padding:16px 20px;border-top:1px solid rgba(255,255,255,.08)}
-.sb-footer a{
-  display:flex;align-items:center;gap:10px;color:rgba(255,255,255,.55);
-  font-size:.83rem;font-weight:600;transition:.2s;
-}
-.sb-footer a:hover{color:#fff}
-
-/* MAIN */
-.main{margin-right:var(--sidebar);min-height:100vh;padding:0}
-
-/* TOPBAR */
-.topbar{
-  background:#fff;padding:16px 28px;display:flex;align-items:center;
-  justify-content:space-between;box-shadow:0 1px 0 var(--gray-b);
-  position:sticky;top:0;z-index:50;
-}
-.topbar h1{font-size:1.15rem;font-weight:900;color:var(--blue)}
-.topbar .tb-right{display:flex;align-items:center;gap:12px}
-.btn{
-  display:inline-flex;align-items:center;gap:7px;padding:9px 20px;
-  border-radius:8px;font-family:'Cairo',sans-serif;font-size:.87rem;
-  font-weight:700;cursor:pointer;border:none;transition:.2s;
-}
-.btn-save{background:var(--orange);color:var(--blue)}
-.btn-save:hover{background:var(--orange-d)}
-.btn-preview{background:var(--blue-mid);color:#fff}
-.btn-preview:hover{background:var(--blue)}
-.btn-sm{padding:7px 14px;font-size:.82rem}
-.btn-danger{background:var(--red);color:#fff}
-.btn-danger:hover{background:#cc2222}
-.btn-ghost{background:var(--gray);color:var(--blue);border:1px solid var(--gray-b)}
-.btn-ghost:hover{background:var(--gray-b)}
-.btn-green{background:var(--green);color:#fff}
-.btn-green:hover{background:#16a34a}
-
-/* CONTENT */
-.content{padding:28px}
-.section-panel{display:none}
-.section-panel.active{display:block}
-
-/* CARDS */
-.card{background:#fff;border-radius:var(--radius);box-shadow:var(--shadow);margin-bottom:20px;overflow:hidden}
-.card-header{
-  padding:16px 22px;border-bottom:1px solid var(--gray-b);
-  display:flex;align-items:center;justify-content:space-between;
-}
-.card-header h3{font-size:.97rem;font-weight:700;color:var(--blue);display:flex;align-items:center;gap:9px}
-.card-header h3 i{color:var(--orange);font-size:.95rem}
-.card-body{padding:22px}
-
-/* FORM */
-.form-grid{display:grid;grid-template-columns:1fr 1fr;gap:16px}
-.form-grid.three{grid-template-columns:1fr 1fr 1fr}
-.form-grid.one{grid-template-columns:1fr}
-.f-group{display:flex;flex-direction:column;gap:5px}
-.f-group label{font-size:.8rem;font-weight:700;color:var(--blue)}
-.f-group label .lang-tag{
-  display:inline-block;font-size:.65rem;padding:1px 6px;border-radius:10px;
-  margin-right:5px;font-weight:600;
-}
-.ar-tag{background:rgba(245,166,35,.15);color:var(--orange-d)}
-.fr-tag{background:rgba(36,84,166,.12);color:var(--blue-light)}
-.f-group input,.f-group textarea,.f-group select{
-  border:1.5px solid var(--gray-b);border-radius:8px;
-  padding:10px 12px;font-family:'Cairo',sans-serif;font-size:.88rem;
-  color:var(--blue);background:var(--gray);outline:none;transition:.2s;
-}
-.f-group input:focus,.f-group textarea:focus,.f-group select:focus{
-  border-color:var(--blue-light);background:#fff;
-  box-shadow:0 0 0 3px rgba(36,84,166,.1);
-}
-.f-group textarea{resize:vertical;min-height:80px}
-.hint{font-size:.74rem;color:var(--gray-t);margin-top:3px}
-
-/* ITEM CARDS (services, products, gallery) */
-.items-list{display:flex;flex-direction:column;gap:14px}
-.item-card{
-  border:1.5px solid var(--gray-b);border-radius:var(--radius);overflow:hidden;
-  transition:.2s;
-}
-.item-card:hover{border-color:var(--blue-light)}
-.item-header{
-  display:flex;align-items:center;justify-content:space-between;
-  padding:12px 16px;background:var(--gray);cursor:pointer;
-}
-.item-header-left{display:flex;align-items:center;gap:12px}
-.item-num{
-  width:28px;height:28px;background:var(--blue);color:var(--orange);
-  border-radius:8px;display:flex;align-items:center;justify-content:center;
-  font-size:.8rem;font-weight:700;flex-shrink:0;
-}
-.item-title{font-size:.9rem;font-weight:700;color:var(--blue)}
-.item-title small{font-weight:400;color:var(--gray-t);font-size:.78rem;margin-right:6px}
-.item-body{padding:18px;display:none}
-.item-body.open{display:block}
-.chevron{color:var(--gray-t);transition:.2s;font-size:.85rem}
-.item-header.expanded .chevron{transform:rotate(180deg)}
-
-/* ICON PICKER */
-.icon-preview{
-  width:44px;height:44px;background:var(--blue);border-radius:10px;
-  display:flex;align-items:center;justify-content:center;
-  font-size:1.2rem;color:var(--orange);flex-shrink:0;
-}
-
-/* COLOR PICKER ROW */
-.color-row{display:flex;align-items:center;gap:10px;flex-wrap:wrap}
-.color-swatch{
-  width:32px;height:32px;border-radius:8px;cursor:pointer;border:3px solid transparent;
-  transition:.15s;flex-shrink:0;
-}
-.color-swatch.selected,.color-swatch:hover{border-color:var(--blue);transform:scale(1.1)}
-
-/* STATS BAR */
-.stats-bar{
-  display:grid;grid-template-columns:repeat(4,1fr);gap:16px;margin-bottom:24px;
-}
-.stat-box{
-  background:#fff;border-radius:var(--radius);padding:18px;
-  box-shadow:var(--shadow);text-align:center;
-}
-.stat-box .n{font-size:1.8rem;font-weight:900;color:var(--orange)}
-.stat-box .l{font-size:.78rem;color:var(--gray-t);margin-top:2px}
-
-/* TOAST */
-#toast{
-  position:fixed;bottom:24px;left:24px;background:#1a2f6e;color:#fff;
-  padding:13px 20px;border-radius:10px;font-size:.88rem;font-weight:600;
-  display:flex;align-items:center;gap:10px;z-index:9998;
-  transform:translateY(80px);opacity:0;transition:.3s;box-shadow:var(--shadow);
-}
-#toast.show{transform:translateY(0);opacity:1}
-#toast.success{background:#166534}
-#toast.error{background:#991b1b}
-#toast i{font-size:1rem}
-
-/* PASSWORD CHANGE */
-.pass-hint{font-size:.78rem;color:var(--gray-t);margin-top:4px}
-
-/* DIVIDER */
-.divider-hr{border:none;border-top:1px solid var(--gray-b);margin:18px 0}
-
-/* TABS */
-.inner-tabs{display:flex;gap:8px;margin-bottom:20px;flex-wrap:wrap}
-.inner-tab{
-  padding:7px 18px;border-radius:8px;border:1.5px solid var(--gray-b);
-  background:#fff;color:var(--gray-t);font-family:'Cairo',sans-serif;
-  font-size:.83rem;font-weight:700;cursor:pointer;transition:.2s;
-}
-.inner-tab.active,.inner-tab:hover{background:var(--blue);color:#fff;border-color:var(--blue)}
-
-/* BADGE */
-.badge{
-  display:inline-block;font-size:.68rem;font-weight:700;
-  padding:2px 8px;border-radius:20px;
-}
-.badge-orange{background:rgba(245,166,35,.15);color:var(--orange-d)}
-.badge-blue{background:rgba(36,84,166,.12);color:var(--blue-light)}
-
-/* UNSAVED INDICATOR */
-.unsaved-dot{
-  width:8px;height:8px;background:var(--orange);border-radius:50%;
-  display:inline-block;margin-right:5px;animation:pulse .8s ease-in-out infinite;
-}
-@keyframes pulse{0%,100%{opacity:1}50%{opacity:.3}}
-
-/* RESPONSIVE */
-@media(max-width:800px){
-  .sidebar{width:220px}
-  .main{margin-right:220px}
-  .form-grid{grid-template-columns:1fr}
-  .stats-bar{grid-template-columns:1fr 1fr}
-}
+*{box-sizing:border-box}
+:root{--navy:#15233f;--navy-2:#0c1630;--gold:#eab617;--line:#dfe3ec;--bg:#f3f5f9;--ink:#15233f;--muted:#5d6780;--ok:#1f8f4e;--warn:#b26a00}
+body{margin:0;font-family:system-ui,'Segoe UI',Arial,sans-serif;background:var(--bg);color:var(--ink);display:grid;grid-template-columns:230px 1fr;min-height:100vh}
+button{font:inherit;cursor:pointer}
+aside{background:var(--navy-2);color:#fff;padding:20px 14px;display:flex;flex-direction:column;gap:6px;position:sticky;top:0;height:100vh}
+aside h2{margin:0 8px 14px;font-size:1.05rem;color:var(--gold)}
+aside .nv{background:none;border:0;color:rgba(255,255,255,.8);text-align:start;padding:10px 12px;border-radius:10px;font-weight:600}
+aside .nv:hover{background:rgba(255,255,255,.08)}
+aside .nv[aria-current=true]{background:var(--gold);color:var(--navy-2)}
+aside .foot{margin-top:auto;font-size:.8rem;color:rgba(255,255,255,.6);padding:10px 12px;line-height:1.6}
+main{padding:22px 28px 60px;min-width:0}
+.top{display:flex;align-items:center;gap:10px;flex-wrap:wrap;margin-bottom:18px}
+.top h1{margin:0;font-size:1.45rem;flex:1;min-width:200px}
+.tabs{display:flex;gap:4px;background:#fff;border:1px solid var(--line);border-radius:999px;padding:4px}
+.tabs button{border:0;background:none;padding:7px 14px;border-radius:999px;font-weight:700;color:var(--muted)}
+.tabs button[aria-pressed=true]{background:var(--navy);color:#fff}
+.btn{border:1px solid var(--line);background:#fff;color:var(--ink);padding:10px 16px;border-radius:10px;font-weight:600}
+.btn:hover{border-color:var(--navy)}
+.btn.pri{background:var(--navy);color:#fff;border-color:var(--navy)}
+.btn.pri:hover{background:var(--navy-2)}
+.btn.danger{color:#b3261e}
+.btn.sm{padding:6px 10px;font-size:.85rem}
+#state{font-size:.85rem;color:var(--muted);min-width:180px}
+#state.dirty{color:var(--warn);font-weight:600}
+#state.saved{color:var(--ok);font-weight:600}
+.card{background:#fff;border:1px solid var(--line);border-radius:14px;padding:20px;margin-bottom:16px}
+.card h3{margin:0 0 14px;font-size:1.05rem}
+.grid2{display:grid;grid-template-columns:1fr 1fr;gap:14px 18px}
+.f{display:grid;gap:6px;font-size:.88rem;font-weight:600;color:var(--ink)}
+input[type=text],input[type=url],textarea{font:inherit;font-weight:400;width:100%;padding:9px 11px;border:1px solid var(--line);border-radius:9px;background:#fff;color:var(--ink)}
+input:focus,textarea:focus{outline:2px solid var(--gold);outline-offset:0;border-color:transparent}
+textarea{min-height:70px;resize:vertical}
+.chk{display:flex;align-items:center;gap:8px;font-weight:600;font-size:.9rem}
+.cats{display:flex;gap:14px;flex-wrap:wrap}
+.imgpick{display:grid;grid-template-columns:72px 1fr;gap:10px;align-items:center}
+.thumb{width:72px;height:72px;object-fit:cover;border-radius:10px;border:1px solid var(--line);background:var(--navy)}
+.item{border:1px solid var(--line);border-radius:12px;padding:16px;margin-bottom:12px;background:#fbfcfe}
+.item-h{display:flex;align-items:center;gap:8px;margin-bottom:12px}
+.item-h b{flex:1;font-size:1rem}
+.item-h .tag{font-size:.75rem;background:#eef1f7;color:var(--muted);padding:3px 9px;border-radius:999px}
+.banner{background:#fff6dc;border:1px solid #f1d78a;color:#5c4300;padding:12px 16px;border-radius:12px;margin-bottom:16px;font-size:.92rem;display:flex;gap:12px;align-items:center;flex-wrap:wrap}
+.steps{counter-reset:s;display:grid;gap:10px;margin:0;padding:0;list-style:none}
+.steps li{counter-increment:s;display:flex;gap:12px;align-items:flex-start;background:#fff;border:1px solid var(--line);border-radius:12px;padding:12px 16px}
+.steps li::before{content:counter(s);flex:none;width:28px;height:28px;border-radius:50%;background:var(--gold);color:var(--navy-2);display:grid;place-items:center;font-weight:800}
+.stats{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin-bottom:16px}
+.stat{background:#fff;border:1px solid var(--line);border-radius:12px;padding:16px}
+.stat b{display:block;font-size:1.6rem}
+.stat span{color:var(--muted);font-size:.85rem}
+.hint{font-size:.8rem;color:var(--muted);font-weight:400}
+.ltxt{display:grid;gap:4px;margin-bottom:12px}
+.ltxt code{font-size:.75rem;color:var(--muted);font-weight:400}
+p.note{font-size:.92rem;margin:0 0 8px}
+@media (max-width:900px){body{grid-template-columns:1fr}aside{position:static;height:auto;flex-direction:row;flex-wrap:wrap}aside .foot{display:none}.grid2,.stats{grid-template-columns:1fr}}
 </style>
 </head>
 <body>
+<aside>
+  <h2>Solution Chantier</h2>
+  <button class="nv" data-v="overview">Overview</button>
+  <button class="nv" data-v="contact">Contact &amp; address</button>
+  <button class="nv" data-v="images">Images</button>
+  <button class="nv" data-v="texts">Website text</button>
+  <button class="nv" data-v="products">Products</button>
+  <button class="nv" data-v="brands">Brands on shelves</button>
+  <div class="foot">Changes are kept as a draft in this browser until you download content.js.</div>
+</aside>
 
-<!-- ===== LOGIN ===== -->
-<div id="loginScreen">
-  <div class="login-box">
-    <div class="login-logo">SC</div>
-    <h2>لوحة التحكم</h2>
-    <p>Panneau d'administration — Solution Chantier</p>
-    <input type="password" id="passInput" placeholder="كلمة المرور / Mot de passe" onkeydown="if(event.key==='Enter')doLogin()">
-    <div class="err" id="loginErr"><i class="fas fa-exclamation-circle"></i> كلمة المرور غير صحيحة</div>
-    <button onclick="doLogin()"><i class="fas fa-sign-in-alt"></i> دخول / Connexion</button>
-    <p style="margin-top:14px;font-size:.75rem;color:var(--gray-t)">كلمة المرور الافتراضية: <strong>admin123</strong></p>
+<main>
+  <div class="top">
+    <h1 id="ttl"></h1>
+    <div class="tabs" role="group" aria-label="Editing language">
+      <button data-al="ar">عربي</button>
+      <button data-al="fr">Français</button>
+      <button data-al="en">English</button>
+    </div>
+    <span id="state"></span>
+    <button class="btn" id="preview">Preview site</button>
+    <button class="btn pri" id="dl">Download content.js</button>
   </div>
-</div>
+  <div id="banner"></div>
+  <div id="view"></div>
+</main>
 
-<!-- ===== APP ===== -->
-<div id="app">
-
-  <!-- SIDEBAR -->
-  <aside class="sidebar">
-    <div class="sb-logo">
-      <div class="sb-logo-icon">SC</div>
-      <div class="sb-logo-text">Solution Chantier<small>لوحة التحكم · Admin</small></div>
-    </div>
-    <nav class="sb-nav">
-      <div class="sb-nav-group">
-        <div class="sb-nav-label">الأقسام الرئيسية</div>
-        <button class="sb-link active" onclick="showSection('general',this)"><i class="fas fa-cog"></i> الإعدادات العامة</button>
-        <button class="sb-link" onclick="showSection('hero',this)"><i class="fas fa-home"></i> الصفحة الرئيسية</button>
-        <button class="sb-link" onclick="showSection('services',this)"><i class="fas fa-tools"></i> الخدمات</button>
-        <button class="sb-link" onclick="showSection('products',this)"><i class="fas fa-box-open"></i> المنتجات</button>
-        <button class="sb-link" onclick="showSection('gallery',this)"><i class="fas fa-images"></i> المعرض</button>
-        <button class="sb-link" onclick="showSection('trust',this)"><i class="fas fa-award"></i> لماذا نحن + العدادات</button>
-      </div>
-      <div class="sb-nav-group">
-        <div class="sb-nav-label">الإدارة</div>
-        <button class="sb-link" onclick="showSection('password',this)"><i class="fas fa-lock"></i> تغيير كلمة المرور</button>
-      </div>
-    </nav>
-    <div class="sb-footer">
-      <a href="index.html" target="_blank"><i class="fas fa-external-link-alt"></i> عرض الموقع</a>
-    </div>
-  </aside>
-
-  <!-- MAIN -->
-  <div class="main">
-
-    <!-- TOPBAR -->
-    <div class="topbar">
-      <h1 id="pageTitle"><i class="fas fa-cog" style="color:var(--orange)"></i> الإعدادات العامة</h1>
-      <div class="tb-right">
-        <span id="unsavedBadge" style="display:none;font-size:.8rem;color:var(--orange-d);font-weight:700">
-          <span class="unsaved-dot"></span>تغييرات غير محفوظة
-        </span>
-        <a href="index.html" target="_blank" class="btn btn-preview"><i class="fas fa-eye"></i> عرض الموقع</a>
-        <button class="btn btn-save" onclick="saveAll()"><i class="fas fa-save"></i> حفظ التغييرات</button>
-      </div>
-    </div>
-
-    <div class="content">
-
-      <!-- ========== GENERAL ========== -->
-      <div class="section-panel active" id="sec-general">
-        <div class="stats-bar">
-          <div class="stat-box"><div class="n" id="st-services">6</div><div class="l">خدمات / Services</div></div>
-          <div class="stat-box"><div class="n" id="st-products">6</div><div class="l">منتجات / Produits</div></div>
-          <div class="stat-box"><div class="n" id="st-gallery">6</div><div class="l">صور المعرض / Galerie</div></div>
-          <div class="stat-box"><div class="n" id="st-pass" style="font-size:1rem;padding-top:10px"><i class="fas fa-check-circle" style="color:var(--green)"></i></div><div class="l">كلمة المرور محددة</div></div>
-        </div>
-
-        <div class="card">
-          <div class="card-header"><h3><i class="fab fa-whatsapp"></i> معلومات التواصل / Informations de contact</h3></div>
-          <div class="card-body">
-            <div class="form-grid">
-              <div class="f-group">
-                <label>رقم واتساب (بدون +) / WhatsApp</label>
-                <input type="text" id="g-whatsapp" placeholder="213550123456">
-                <span class="hint">مثال: 213550123456 — بدون + أو مسافات</span>
-              </div>
-              <div class="f-group">
-                <label>رقم الهاتف للعرض / Téléphone affiché</label>
-                <input type="text" id="g-phone" placeholder="+213 0XX XX XX XX">
-              </div>
-              <div class="f-group">
-                <label><i class="fab fa-facebook-f"></i> رابط صفحة فيسبوك</label>
-                <input type="url" id="g-facebook" placeholder="https://www.facebook.com/...">
-              </div>
-              <div class="f-group">
-                <label>العنوان / Adresse</label>
-                <input type="text" id="g-address" placeholder="عدرار، الجزائر — Adrar, Algérie">
-              </div>
-              <div class="f-group">
-                <label>أوقات العمل / Horaires</label>
-                <input type="text" id="g-hours" placeholder="السبت – الخميس: 8:00ص – 8:00م">
-              </div>
-            </div>
-          </div>
-        </div>
-
-        <div class="card">
-          <div class="card-header"><h3><i class="fas fa-map"></i> رابط خريطة Google Maps</h3></div>
-          <div class="card-body">
-            <div class="f-group form-grid one">
-              <label>رابط Embed من Google Maps</label>
-              <input type="url" id="g-mapurl" placeholder="https://www.google.com/maps/embed?pb=...">
-              <span class="hint">اذهب إلى Google Maps ← مشاركة ← تضمين خريطة ← انسخ رابط src</span>
-            </div>
-          </div>
-        </div>
-      </div>
-
-      <!-- ========== HERO ========== -->
-      <div class="section-panel" id="sec-hero">
-        <div class="card">
-          <div class="card-header"><h3><i class="fas fa-heading"></i> نص الصفحة الرئيسية / Texte Hero</h3></div>
-          <div class="card-body">
-            <div class="form-grid">
-              <div class="f-group">
-                <label><span class="lang-tag ar-tag">عر</span> الشعار بالعربية</label>
-                <input type="text" id="h-tagAr" placeholder="خبير حلول البناء في عين واحدة">
-              </div>
-              <div class="f-group">
-                <label><span class="lang-tag fr-tag">FR</span> Slogan en français</label>
-                <input type="text" id="h-tagFr" placeholder="Votre expert en solutions construction">
-              </div>
-            </div>
-            <hr class="divider-hr">
-            <p style="font-size:.83rem;font-weight:700;color:var(--gray-t);margin-bottom:12px">إحصائيات Hero / Statistiques Hero</p>
-            <div class="form-grid three">
-              <div class="f-group">
-                <label>رقم الإحصاء 1</label>
-                <input type="number" id="h-s1" placeholder="200">
-                <span class="hint">مشروع ساعدناه / Projets</span>
-              </div>
-              <div class="f-group">
-                <label>رقم الإحصاء 2</label>
-                <input type="number" id="h-s2" placeholder="50">
-                <span class="hint">منتج متخصص / Produits</span>
-              </div>
-              <div class="f-group">
-                <label>رقم الإحصاء 3</label>
-                <input type="number" id="h-s3" placeholder="10">
-                <span class="hint">سنوات خبرة / Années</span>
-              </div>
-            </div>
-          </div>
-        </div>
-      </div>
-
-      <!-- ========== SERVICES ========== -->
-      <div class="section-panel" id="sec-services">
-        <div class="card">
-          <div class="card-header">
-            <h3><i class="fas fa-tools"></i> الخدمات / Services</h3>
-          </div>
-          <div class="card-body">
-            <div class="items-list" id="servicesList"></div>
-          </div>
-        </div>
-      </div>
-
-      <!-- ========== PRODUCTS ========== -->
-      <div class="section-panel" id="sec-products">
-        <div class="card">
-          <div class="card-header">
-            <h3><i class="fas fa-box-open"></i> المنتجات / Produits</h3>
-          </div>
-          <div class="card-body">
-            <div class="items-list" id="productsList"></div>
-          </div>
-        </div>
-      </div>
-
-      <!-- ========== GALLERY ========== -->
-      <div class="section-panel" id="sec-gallery">
-        <div class="card">
-          <div class="card-header">
-            <h3><i class="fas fa-images"></i> صور المعرض قبل/بعد / Galerie Avant-Après</h3>
-          </div>
-          <div class="card-body">
-            <div style="background:rgba(245,166,35,.08);border:1px solid rgba(245,166,35,.3);border-radius:8px;padding:12px 16px;margin-bottom:20px;font-size:.83rem;color:var(--orange-d)">
-              <i class="fas fa-info-circle"></i>
-              يمكنك استخدام روابط صور من الإنترنت (Unsplash, Imgur, إلخ) أو روابط صور مرفوعة على Google Drive (بصيغة مباشرة).
-              Pour les images locales, placez-les dans le même dossier et entrez juste le nom du fichier (ex: avant1.jpg).
-            </div>
-            <div class="items-list" id="galleryList"></div>
-          </div>
-        </div>
-      </div>
-
-      <!-- ========== TRUST ========== -->
-      <div class="section-panel" id="sec-trust">
-        <div class="card">
-          <div class="card-header"><h3><i class="fas fa-award"></i> أسباب الاختيار / Raisons de choisir</h3></div>
-          <div class="card-body">
-            <div class="items-list" id="trustList"></div>
-          </div>
-        </div>
-
-        <div class="card">
-          <div class="card-header"><h3><i class="fas fa-chart-bar"></i> العدادات / Compteurs</h3></div>
-          <div class="card-body">
-            <div class="form-grid">
-              <div class="f-group">
-                <label>عداد 1 — مشروع ساعدناه / Projets aidés</label>
-                <input type="number" id="ctr-1" placeholder="200">
-              </div>
-              <div class="f-group">
-                <label>عداد 2 — منتج متخصص / Produits</label>
-                <input type="number" id="ctr-2" placeholder="50">
-              </div>
-              <div class="f-group">
-                <label>عداد 3 — سنوات خبرة / Années d'exp.</label>
-                <input type="number" id="ctr-3" placeholder="10">
-              </div>
-              <div class="f-group">
-                <label>عداد 4 — رضا العملاء % / Satisfaction %</label>
-                <input type="number" id="ctr-4" placeholder="100" max="100">
-              </div>
-            </div>
-          </div>
-        </div>
-      </div>
-
-      <!-- ========== PASSWORD ========== -->
-      <div class="section-panel" id="sec-password">
-        <div class="card">
-          <div class="card-header"><h3><i class="fas fa-lock"></i> تغيير كلمة المرور / Changer le mot de passe</h3></div>
-          <div class="card-body">
-            <div class="form-grid" style="max-width:480px">
-              <div class="f-group">
-                <label>كلمة المرور الحالية / Mot de passe actuel</label>
-                <input type="password" id="p-current" placeholder="••••••••">
-              </div>
-              <div class="f-group">
-                <label>كلمة المرور الجديدة / Nouveau mot de passe</label>
-                <input type="password" id="p-new" placeholder="••••••••">
-              </div>
-              <div class="f-group">
-                <label>تأكيد كلمة المرور / Confirmer</label>
-                <input type="password" id="p-confirm" placeholder="••••••••">
-              </div>
-            </div>
-            <br>
-            <button class="btn btn-save" onclick="changePass()"><i class="fas fa-key"></i> تغيير كلمة المرور</button>
-          </div>
-        </div>
-
-        <div class="card">
-          <div class="card-header"><h3><i class="fas fa-sign-out-alt"></i> تسجيل الخروج / Déconnexion</h3></div>
-          <div class="card-body">
-            <p style="font-size:.87rem;color:var(--gray-t);margin-bottom:16px">تسجيل الخروج من لوحة التحكم.</p>
-            <button class="btn btn-danger" onclick="logout()"><i class="fas fa-sign-out-alt"></i> خروج / Déconnexion</button>
-          </div>
-        </div>
-      </div>
-
-    </div><!-- /content -->
-  </div><!-- /main -->
-</div><!-- /app -->
-
-<div id="toast"><i class="fas fa-check-circle"></i> <span id="toastMsg">تم الحفظ</span></div>
+<datalist id="imgs"></datalist>
+<input type="file" id="imp" accept=".js,text/javascript" hidden>
 
 <script>
-/* =====================================================
-   DEFAULT DATA — mirrors index.html defaults
-   ===================================================== */
-const DEFAULTS = {
-  whatsapp: '213XXXXXXXXX',
-  phone: '+213 0XX XX XX XX',
-  facebook: 'https://www.facebook.com/SolutionChantierAdrar',
-  address: 'عدرار، الجزائر — Adrar, Algérie',
-  hours: 'السبت – الخميس: 8:00ص – 8:00م',
-  mapurl: 'https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d114959.14!2d-0.3326!3d27.8741!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x5849fe65e62745e7%3A0x71b01e14f94f1baf!2sAdrar%2C%20Algeria!5e0!3m2!1sar!2sdz!4v1700000000001',
-  hero: { tagAr: 'خبير حلول البناء في عين واحدة', tagFr: 'Votre expert en solutions construction', s1: 200, s2: 50, s3: 10 },
-  services: [
-    { icon: 'fas fa-search-plus', titleAr: 'تشخيص وإصلاح الشقوق', titleFr: 'Diagnostic & Réparation des Fissures', descAr: 'نحدد أسباب الشقوق ونقدم الحل المناسب سواء كانت سطحية أو هيكلية مع ضمان متانة طويلة الأمد.', descFr: 'Identification des causes et solutions pour fissures superficielles ou structurelles.', tag: 'شقوق · Fissures' },
-    { icon: 'fas fa-tint-slash', titleAr: 'عزل الرطوبة والتسربات', titleFr: 'Étanchéité & Traitement Humidité', descAr: 'معالجة مشاكل الرطوبة في الأسقف والجدران والقواعد بأحدث مواد العزل المائي المتوفرة.', descFr: 'Traitement de l\'humidité et infiltrations avec les meilleurs produits d\'étanchéité.', tag: 'رطوبة · Humidité' },
-    { icon: 'fas fa-hard-hat', titleAr: 'ترميم الخرسانة', titleFr: 'Restauration du Béton', descAr: 'إعادة تأهيل الخرسانة التالفة وعلاج التفتت والتآكل باستخدام مواد ترميم عالية الأداء.', descFr: 'Réhabilitation du béton endommagé avec mortiers haute performance.', tag: 'خرسانة · Béton' },
-    { icon: 'fas fa-building', titleAr: 'تقوية الهيكل الإنشائي', titleFr: 'Renforcement Structurel', descAr: 'تعزيز وتدعيم العناصر الإنشائية الضعيفة باستخدام تقنيات وأنظمة متطورة تضمن سلامة المبنى.', descFr: 'Renforcement des éléments structurels affaiblis par des techniques avancées.', tag: 'هيكل · Structure' },
-    { icon: 'fas fa-paint-roller', titleAr: 'معالجة الجدران والواجهات', titleFr: 'Traitement Murs & Façades', descAr: 'إصلاح وتحسين الواجهات الخارجية والداخلية وحمايتها من العوامل البيئية والتلوث.', descFr: 'Réparation et protection des façades extérieures et intérieures.', tag: 'جدران · Murs' },
-    { icon: 'fas fa-clipboard-check', titleAr: 'استشارة تقنية مجانية', titleFr: 'Consultation Technique Gratuite', descAr: 'تقييم مجاني لمشكلتك وتوجيه احترافي لاختيار المنتج والطريقة المناسبة بدون التزام.', descFr: 'Évaluation gratuite et conseils professionnels sans engagement.', tag: 'استشارة · Conseil' }
-  ],
-  products: [
-    { emoji: '🔵', bg: 'linear-gradient(135deg,#0d2b6e,#1a4fa0)', titleAr: 'مادة الحقن اپوکسي للشقوق', titleFr: 'Résine Époxy d\'Injection', useAr: 'مثالية لإصلاح الشقوق الدقيقة في الخرسانة والمباني. قوة شد عالية ومقاومة للماء.', useFr: 'Idéale pour réparer les micro-fissures dans le béton. Haute résistance.', badge: 'الأكثر طلباً' },
-    { emoji: '🟢', bg: 'linear-gradient(135deg,#0d3b2e,#1a6b52)', titleAr: 'طلاء عازل للماء — أسطح', titleFr: 'Revêtement Imperméabilisant Toiture', useAr: 'عزل أسطح أفقية ومائلة، يتحمل درجات الحرارة المرتفعة في مناخ عدرار الصحراوي.', useFr: 'Imperméabilisation toits, résiste aux hautes températures d\'Adrar.', badge: '' },
-    { emoji: '🏗️', bg: 'linear-gradient(135deg,#3b2d1a,#6b4f2a)', titleAr: 'ملاط ترميم خرسانة عالي القوة', titleFr: 'Mortier Réparation Béton HR', useAr: 'لسد الثقوب وإصلاح التجويفات في الخرسانة، مقاوم للانكماش وسهل التطبيق.', useFr: 'Boucher trous et cavités béton, résistant au retrait, facile d\'application.', badge: '' },
-    { emoji: '💧', bg: 'linear-gradient(135deg,#1a1a3e,#2d2d6b)', titleAr: 'مادة الكريستال المانعة للماء', titleFr: 'Cristallisation Imperméabilisante', useAr: 'تتغلغل في مسام الخرسانة وتتبلور لمنع نفاذية الماء. حماية دائمة ضد الضغط العالي.', useFr: 'Pénètre et cristallise dans le béton pour bloquer infiltrations. Permanente.', badge: '' },
-    { emoji: '⚡', bg: 'linear-gradient(135deg,#1e1a3e,#3a2d6b)', titleAr: 'شريط تقوية كاربون فيبر', titleFr: 'Tissu Renfort Fibre de Carbone', useAr: 'تقوية الأعمدة والعتبات المتشققة بأوزان خفيفة وقوة شد استثنائية.', useFr: 'Renforcement poteaux et poutres, légèreté et haute résistance.', badge: '' },
-    { emoji: '🔧', bg: 'linear-gradient(135deg,#3e1a1a,#6b2a2a)', titleAr: 'مادة رابطة للمباني القديمة', titleFr: 'Agent d\'Adhérence Maçonnerie', useAr: 'تحسين التصاق الملاط الجديد بالأسطح القديمة والملساء لضمان ثبات الترميم.', useFr: 'Améliore l\'adhérence du nouveau mortier sur les anciennes surfaces lisses.', badge: '' }
-  ],
-  gallery: [
-    { cat: 'crack', img1: 'https://images.unsplash.com/photo-1582719508461-905c673771fd?w=400&q=65&auto=format', img2: 'https://images.unsplash.com/photo-1558618666-fcd25c85cd64?w=400&q=65&auto=format', titleAr: 'إصلاح شقوق جدار خارجي', titleFr: 'Réparation fissures mur ext.', descAr: 'حقن اپوکسي + ملاط ترميم خاص', descFr: 'Injection époxy + mortier réparation' },
-    { cat: 'hum',   img1: 'https://images.unsplash.com/photo-1504328345606-18bbc8c9d7d1?w=400&q=65&auto=format', img2: 'https://images.unsplash.com/photo-1513694203232-719a280e022f?w=400&q=65&auto=format', titleAr: 'معالجة رطوبة السطح', titleFr: 'Traitement humidité toiture', descAr: 'عزل مائي متعدد الطبقات', descFr: 'Imperméabilisation multicouches' },
-    { cat: 'con',   img1: 'https://images.unsplash.com/photo-1596273501936-5b56bca4eb31?w=400&q=65&auto=format', img2: 'https://images.unsplash.com/photo-1585771724684-38269d6639fd?w=400&q=65&auto=format', titleAr: 'ترميم عمود خرساني تالف', titleFr: 'Réparation poteau béton', descAr: 'ملاط عالي القوة + حماية من التآكل', descFr: 'Mortier HR + anticorrosion' },
-    { cat: 'wall',  img1: 'https://images.unsplash.com/photo-1502672260266-1c1ef2d93688?w=400&q=65&auto=format', img2: 'https://images.unsplash.com/photo-1484154218962-a197022b5858?w=400&q=65&auto=format', titleAr: 'ترميم واجهة خارجية', titleFr: 'Rénovation façade extérieure', descAr: 'طلاء حماية + ترميم اللياسة', descFr: 'Peinture protection + enduit' },
-    { cat: 'crack', img1: 'https://images.unsplash.com/photo-1600596542815-ffad4c1539a9?w=400&q=65&auto=format', img2: 'https://images.unsplash.com/photo-1560440021-33f9b867899d?w=400&q=65&auto=format', titleAr: 'شقوق في الأساسات', titleFr: 'Fissures fondations', descAr: 'حقن اپوکسي + عزل مضاد للماء', descFr: 'Injection époxy + étanchéité' },
-    { cat: 'hum',   img1: 'https://images.unsplash.com/photo-1595514535215-9f5d09a6da3e?w=400&q=65&auto=format', img2: 'https://images.unsplash.com/photo-1586023492125-27b2c045efd7?w=400&q=65&auto=format', titleAr: 'رطوبة الجدران الداخلية', titleFr: 'Humidité murs intérieurs', descAr: 'علاج صاعد + مادة طاردة للماء', descFr: 'Traitement capillaire + hydrofuge' }
-  ],
-  trust: [
-    { icon: 'fas fa-user-tie',       titleAr: 'نصيحة خبير حقيقية',        titleFr: 'Conseil Expert Authentique',   descAr: 'نقدم توجيهاً تقنياً صادقاً مبنياً على خبرة حقيقية، لا مجرد بيع منتجات.', descFr: 'Conseils techniques honnêtes basés sur une vraie expérience.' },
-    { icon: 'fas fa-box-open',        titleAr: 'المنتج الصح للمشكلة الصح',  titleFr: 'Le Bon Produit',               descAr: 'نرشدك لأنسب المواد لحالتك تحديداً مما يوفر وقتك ومالك ويضمن النتيجة.', descFr: 'Vous guidons vers les matériaux les mieux adaptés à votre cas.' },
-    { icon: 'fas fa-map-marked-alt',  titleAr: 'دعم محلي في عدرار',         titleFr: 'Support Local Adrar',          descAr: 'نحن موجودون في نفس المنطقة ونعرف تحديات المناخ والبناء المحلية جيداً.', descFr: 'Présents dans la région, nous connaissons les défis locaux.' },
-    { icon: 'fas fa-bolt',            titleAr: 'استجابة سريعة',             titleFr: 'Réponse Rapide',               descAr: 'نرد على استفساراتك بسرعة عبر واتساب ونقدم الحل في أقل وقت ممكن.', descFr: 'Réponse rapide sur WhatsApp.' },
-    { icon: 'fas fa-check-double',    titleAr: 'ضمان جودة المنتجات',        titleFr: 'Qualité Garantie',             descAr: 'نوفر فقط منتجات مجربة وموثوقة من علامات تجارية معترف بها.', descFr: 'Uniquement des produits testés et fiables.' },
-    { icon: 'fas fa-comments',        titleAr: 'متابعة ما بعد البيع',       titleFr: 'Suivi Après-Vente',            descAr: 'نتابع معك حتى تحل المشكلة تماماً وتطمئن على نتيجة العمل.', descFr: 'Suivi jusqu\'à la résolution complète du problème.' }
-  ],
-  counters: [200, 50, 10, 100]
-};
+const IMAGES=['logo.jpg','49359.jpg','49360.jpg','49361.jpg','49362.jpg','49363.jpg','49364.jpg','49365.jpg','49366.jpg','49367.jpg','49368.jpg','49369.jpg','49370.jpg','49371.jpg','49372.jpg','49373.jpg','49374.jpg','49375.jpg','49376.jpg','49377.jpg','49378.jpg','49379.jpg','49380.jpg','49381.jpg','49382.jpg','49383.jpg'].map(f=>'images/'+f);
+const GROUPS=[
+  ['Header & navigation',/^(nav_|brand_sub|cta_wa)/],
+  ['Hero (top of the home page)',/^hero_/],
+  ['Scrolling banner',/^tk\d/],
+  ['Problems section',/^(pr_|pr\d)/],
+  ['Products section',/^(p_|f_)/],
+  ['Brands section',/^b_/],
+  ['Advice form',/^h_/],
+  ['Why us',/^w_|^w\d/],
+  ['Visit us',/^v_/],
+  ['Footer',/^ft_/],
+  ['WhatsApp messages & SEO',/^(meta_|msg_)/]
+];
+const HINTS={msg_ask:'Use {name} where the product name goes.',msg_form:'Use {name}, {type} and {desc}. They are filled from the advice form.',msg_generic:'Opening message for general WhatsApp buttons.'};
+const CATS=[['moisture','Moisture'],['concrete','Concrete'],['floors','Floors']];
+const LANG_NAMES={ar:'Arabic',fr:'French',en:'English'};
 
-/* =====================================================
-   STATE
-   ===================================================== */
-let D = {}; // current working data
-let hasUnsaved = false;
+const SRC=window.SC_CONTENT;
+const clone=x=>JSON.parse(JSON.stringify(x));
+const valid=d=>!!(d&&d.contact&&d.texts&&Array.isArray(d.products)&&Array.isArray(d.brands)&&Array.isArray(d.brandChips)&&d.images);
+let W,AL='ar',VIEW='overview',saved=false,fromDraft=false;
+try{ const d=localStorage.getItem('sc_draft'); if(d&&valid(JSON.parse(d))){ W=JSON.parse(d); fromDraft=true; } }catch(e){}
+if(!W) W=clone(SRC);
 
-function markUnsaved(){
-  hasUnsaved = true;
-  document.getElementById('unsavedBadge').style.display = 'inline-flex';
-}
-
-/* =====================================================
-   LOGIN
-   ===================================================== */
-function getPass(){ return localStorage.getItem('sc_pass') || 'admin123'; }
-
-function doLogin(){
-  const val = document.getElementById('passInput').value;
-  if(val === getPass()){
-    document.getElementById('loginScreen').style.display = 'none';
-    document.getElementById('app').style.display = 'block';
-    initApp();
-  } else {
-    document.getElementById('loginErr').style.display = 'block';
-    document.getElementById('passInput').value = '';
-    document.getElementById('passInput').focus();
+const $=s=>document.querySelector(s);
+function h(tag,props,...kids){
+  const e=document.createElement(tag);
+  for(const[k,v] of Object.entries(props||{})){
+    if(v==null||v===false) continue;
+    if(k==='class') e.className=v;
+    else if(k==='value') e.value=v;
+    else if(k==='checked') e.checked=!!v;
+    else if(k==='onclick') e.addEventListener('click',v);
+    else e.setAttribute(k,v===true?'':v);
   }
+  kids.flat().forEach(c=>{ if(c==null||c===false) return; e.append(c instanceof Node?c:document.createTextNode(String(c))); });
+  return e;
 }
-
-function logout(){
-  document.getElementById('app').style.display = 'none';
-  document.getElementById('loginScreen').style.display = 'flex';
-  document.getElementById('passInput').value = '';
+function persist(){
+  try{ localStorage.setItem('sc_draft',JSON.stringify(W)); }catch(e){}
+  saved=false; setState();
 }
-
-function changePass(){
-  const cur = document.getElementById('p-current').value;
-  const nw  = document.getElementById('p-new').value;
-  const cf  = document.getElementById('p-confirm').value;
-  if(cur !== getPass()){ showToast('كلمة المرور الحالية غير صحيحة','error'); return; }
-  if(!nw){ showToast('أدخل كلمة مرور جديدة','error'); return; }
-  if(nw !== cf){ showToast('كلمتا المرور غير متطابقتين','error'); return; }
-  localStorage.setItem('sc_pass', nw);
-  document.getElementById('p-current').value = '';
-  document.getElementById('p-new').value = '';
-  document.getElementById('p-confirm').value = '';
-  showToast('تم تغيير كلمة المرور بنجاح ✓', 'success');
+function setState(){
+  const s=$('#state');
+  if(saved){ s.textContent='Downloaded. Replace content.js in the project and push.'; s.className='saved'; }
+  else { s.textContent='Unsaved changes (kept as a draft in this browser)'; s.className='dirty'; }
 }
-
-/* =====================================================
-   INIT
-   ===================================================== */
-function initApp(){
-  const saved = localStorage.getItem('sc_data');
-  D = saved ? JSON.parse(saved) : JSON.parse(JSON.stringify(DEFAULTS));
-  populateAll();
+const bind=(el,fn)=>{ el.addEventListener('input',()=>{ fn(el.type==='checkbox'?el.checked:el.value); persist(); }); return el; };
+const F=(label,control,hint)=>h('label',{class:'f'},label,control,hint?h('small',{class:'hint'},hint):null);
+const txt=(o,k,type='text')=>bind(h('input',{type,value:o[k]??''}),v=>o[k]=v);
+const lt=(o,k,multi)=>{
+  o[k]=o[k]||{ar:'',fr:'',en:''};
+  const ctl=multi?h('textarea',{value:o[k][AL]||''}):h('input',{type:'text',value:o[k][AL]||''});
+  return bind(ctl,v=>o[k][AL]=v);
+};
+const chk=(o,k,label)=>h('label',{class:'chk'},bind(h('input',{type:'checkbox',checked:!!o[k]}),v=>o[k]=v),label);
+function imgPick(o,k){
+  const img=h('img',{class:'thumb',src:o[k]||'',alt:''});
+  const inp=bind(h('input',{type:'text',list:'imgs',value:o[k]||''}),v=>{ o[k]=v; img.src=v; });
+  return h('div',{class:'imgpick'},img,inp);
 }
+function move(arr,i,d){ const j=i+d; if(j<0||j>=arr.length) return; [arr[i],arr[j]]=[arr[j],arr[i]]; persist(); render(); }
+function slug(s){ return (s||'item').toLowerCase().replace(/[^a-z0-9]+/g,'-').replace(/^-|-$/g,'')+'-'+Date.now().toString(36).slice(-4); }
+const note=t=>h('p',{class:'note'},t);
 
-function populateAll(){
-  // General
-  setV('g-whatsapp', D.whatsapp);
-  setV('g-phone',    D.phone);
-  setV('g-facebook', D.facebook);
-  setV('g-address',  D.address);
-  setV('g-hours',    D.hours);
-  setV('g-mapurl',   D.mapurl);
-  // Hero
-  setV('h-tagAr', D.hero.tagAr);
-  setV('h-tagFr', D.hero.tagFr);
-  setV('h-s1',    D.hero.s1);
-  setV('h-s2',    D.hero.s2);
-  setV('h-s3',    D.hero.s3);
-  // Lists
-  buildServicesList();
-  buildProductsList();
-  buildGalleryList();
-  buildTrustList();
-  // Counters
-  setV('ctr-1', D.counters[0]);
-  setV('ctr-2', D.counters[1]);
-  setV('ctr-3', D.counters[2]);
-  setV('ctr-4', D.counters[3]);
-  // Stats bar
-  document.getElementById('st-services').textContent = D.services.length;
-  document.getElementById('st-products').textContent = D.products.length;
-  document.getElementById('st-gallery').textContent  = D.gallery.length;
-
-  // Mark changes on any input
-  document.querySelectorAll('input,textarea,select').forEach(el =>
-    el.addEventListener('input', markUnsaved)
+function vOverview(){
+  return h('div',null,
+    h('div',{class:'stats'},
+      h('div',{class:'stat'},h('b',null,W.products.length),h('span',null,'Products')),
+      h('div',{class:'stat'},h('b',null,W.brands.length),h('span',null,'Brand cards on the shelves')),
+      h('div',{class:'stat'},h('b',null,Object.keys(W.texts).length),h('span',null,'Text blocks (3 languages each)')),
+      h('div',{class:'stat'},h('b',null,'3'),h('span',null,'Languages: Arabic, French, English'))
+    ),
+    h('div',{class:'card'},h('h3',null,'How to publish a change'),
+      h('ol',{class:'steps'},
+        h('li',null,'Edit anything in the other sections. Each change is saved as a draft in this browser.'),
+        h('li',null,'Click "Preview site" to see the real website with your draft (it opens in a new tab).'),
+        h('li',null,'When you are happy, click "Download content.js".'),
+        h('li',null,'Replace content.js in the project folder with the downloaded file, then commit and push. The website updates after the push.')
+      )
+    ),
+    h('div',{class:'card'},h('h3',null,'Tips'),
+      note('New photos: put the file in the images/ folder, then type its path (for example images/50001.jpg) in the photo field. The thumbnail shows the result.'),
+      note('Fill all three languages for each text. The website shows only the language the visitor chooses, never two at once.'),
+      note('To start over from the published content, click "Discard draft" in the top bar.')
+    )
   );
 }
 
-function setV(id, val){ const el = document.getElementById(id); if(el) el.value = val ?? ''; }
-function getV(id){ const el = document.getElementById(id); return el ? el.value : ''; }
-
-/* =====================================================
-   BUILD DYNAMIC LISTS
-   ===================================================== */
-
-/* ---- SERVICES ---- */
-function buildServicesList(){
-  const list = document.getElementById('servicesList');
-  list.innerHTML = D.services.map((s, i) => `
-    <div class="item-card">
-      <div class="item-header" onclick="toggleItem(this)" id="sh${i}">
-        <div class="item-header-left">
-          <div class="item-num">${i+1}</div>
-          <div>
-            <div class="item-title">${s.titleAr} <small>/ ${s.titleFr}</small></div>
-          </div>
-        </div>
-        <i class="fas fa-chevron-down chevron"></i>
-      </div>
-      <div class="item-body">
-        <div class="form-grid">
-          <div class="f-group">
-            <label><span class="lang-tag ar-tag">عر</span> العنوان بالعربية</label>
-            <input type="text" id="s${i}-titleAr" value="${esc(s.titleAr)}">
-          </div>
-          <div class="f-group">
-            <label><span class="lang-tag fr-tag">FR</span> Titre en français</label>
-            <input type="text" id="s${i}-titleFr" value="${esc(s.titleFr)}">
-          </div>
-          <div class="f-group">
-            <label><span class="lang-tag ar-tag">عر</span> الوصف بالعربية</label>
-            <textarea id="s${i}-descAr">${esc(s.descAr)}</textarea>
-          </div>
-          <div class="f-group">
-            <label><span class="lang-tag fr-tag">FR</span> Description en français</label>
-            <textarea id="s${i}-descFr">${esc(s.descFr)}</textarea>
-          </div>
-          <div class="f-group">
-            <label>أيقونة Font Awesome / Icône FA</label>
-            <input type="text" id="s${i}-icon" value="${esc(s.icon)}" placeholder="fas fa-tools">
-            <span class="hint">ابحث على <a href="https://fontawesome.com/icons" target="_blank" style="color:var(--blue-light)">fontawesome.com/icons</a> وانسخ الكلاس</span>
-          </div>
-          <div class="f-group">
-            <label>التاج / Tag</label>
-            <input type="text" id="s${i}-tag" value="${esc(s.tag)}" placeholder="شقوق · Fissures">
-          </div>
-        </div>
-      </div>
-    </div>`).join('');
+function vContact(){
+  const c=W.contact;
+  c.address=c.address||{ar:'',fr:'',en:''};
+  c.mapQuery=c.mapQuery||{ar:'',fr:'',en:''};
+  return h('div',null,
+    h('div',{class:'card'},h('h3',null,'Phone & WhatsApp'),
+      h('div',{class:'grid2'},
+        F('Phone (shown on the site)',txt(c,'phone')),
+        F('Phone link (international, no spaces)',txt(c,'tel'),'Example: +213668834193'),
+        F('WhatsApp number (digits only, no +)',txt(c,'whatsapp'),'Example: 213668834193')
+      )),
+    h('div',{class:'card'},h('h3',null,'Social links'),
+      h('div',{class:'grid2'},
+        F('Facebook page URL',txt(c,'facebook','url')),
+        F('TikTok profile URL',txt(c,'tiktok','url'))
+      )),
+    h('div',{class:'card'},h('h3',null,`Address — ${LANG_NAMES[AL]}`),
+      h('div',{class:'grid2'},
+        F('Address shown on the site',lt(c,'address',true)),
+        F('Map search text (used for the map and Directions)',lt(c,'mapQuery',false))
+      )),
+    h('div',{class:'card'},h('h3',null,'Brand names shown on the shelves'),
+      F('Comma-separated list',bind(h('textarea',{value:W.brandChips.join(', ')}),v=>W.brandChips=v.split(',').map(s=>s.trim()).filter(Boolean)),'Example: Granitex, Sika, Pigma Color'))
+  );
 }
 
-/* ---- PRODUCTS ---- */
-function buildProductsList(){
-  const list = document.getElementById('productsList');
-  list.innerHTML = D.products.map((p, i) => `
-    <div class="item-card">
-      <div class="item-header" onclick="toggleItem(this)">
-        <div class="item-header-left">
-          <div class="item-num">${i+1}</div>
-          <div>
-            <div class="item-title">${p.emoji} ${p.titleAr} <small>/ ${p.titleFr}</small></div>
-          </div>
-        </div>
-        <i class="fas fa-chevron-down chevron"></i>
-      </div>
-      <div class="item-body">
-        <div class="form-grid">
-          <div class="f-group">
-            <label><span class="lang-tag ar-tag">عر</span> اسم المنتج بالعربية</label>
-            <input type="text" id="p${i}-titleAr" value="${esc(p.titleAr)}">
-          </div>
-          <div class="f-group">
-            <label><span class="lang-tag fr-tag">FR</span> Nom du produit en français</label>
-            <input type="text" id="p${i}-titleFr" value="${esc(p.titleFr)}">
-          </div>
-          <div class="f-group">
-            <label><span class="lang-tag ar-tag">عر</span> حالة الاستخدام بالعربية</label>
-            <textarea id="p${i}-useAr">${esc(p.useAr)}</textarea>
-          </div>
-          <div class="f-group">
-            <label><span class="lang-tag fr-tag">FR</span> Cas d'usage en français</label>
-            <textarea id="p${i}-useFr">${esc(p.useFr)}</textarea>
-          </div>
-          <div class="f-group">
-            <label>إيموجي / Emoji (للبطاقة)</label>
-            <input type="text" id="p${i}-emoji" value="${esc(p.emoji)}" placeholder="🔵">
-          </div>
-          <div class="f-group">
-            <label>شعار الخلفية (CSS gradient أو لون)</label>
-            <input type="text" id="p${i}-bg" value="${esc(p.bg)}" placeholder="linear-gradient(135deg,#0d2b6e,#1a4fa0)">
-          </div>
-          <div class="f-group">
-            <label>شارة المنتج (اختياري) / Badge</label>
-            <input type="text" id="p${i}-badge" value="${esc(p.badge)}" placeholder="الأكثر طلباً">
-          </div>
-        </div>
-      </div>
-    </div>`).join('');
+function vImages(){
+  return h('div',null,
+    h('div',{class:'card'},h('h3',null,'Logo (header, footer and the round seal on the hero)'),imgPick(W.images,'logo')),
+    h('div',{class:'card'},h('h3',null,'Storefront photo (large picture on the hero)'),imgPick(W.images,'storefront'),
+      note('Use a wide photo of the shop front. The site shows the whole picture without cropping.'))
+  );
 }
 
-/* ---- GALLERY ---- */
-const CAT_LABELS = { crack:'شقوق / Fissures', hum:'رطوبة / Humidité', con:'خرسانة / Béton', wall:'جدران / Murs' };
-function buildGalleryList(){
-  const list = document.getElementById('galleryList');
-  list.innerHTML = D.gallery.map((g, i) => `
-    <div class="item-card">
-      <div class="item-header" onclick="toggleItem(this)">
-        <div class="item-header-left">
-          <div class="item-num">${i+1}</div>
-          <div>
-            <div class="item-title">${g.titleAr} <small>/ ${g.titleFr}</small></div>
-            <span class="badge badge-blue" style="font-size:.68rem;margin-top:2px">${CAT_LABELS[g.cat]||g.cat}</span>
-          </div>
-        </div>
-        <i class="fas fa-chevron-down chevron"></i>
-      </div>
-      <div class="item-body">
-        <div class="form-grid">
-          <div class="f-group">
-            <label>صورة قبل / Image Avant (URL)</label>
-            <input type="url" id="g${i}-img1" value="${esc(g.img1)}" placeholder="https://...">
-          </div>
-          <div class="f-group">
-            <label>صورة بعد / Image Après (URL)</label>
-            <input type="url" id="g${i}-img2" value="${esc(g.img2)}" placeholder="https://...">
-          </div>
-          <div class="f-group">
-            <label><span class="lang-tag ar-tag">عر</span> العنوان بالعربية</label>
-            <input type="text" id="g${i}-titleAr" value="${esc(g.titleAr)}">
-          </div>
-          <div class="f-group">
-            <label><span class="lang-tag fr-tag">FR</span> Titre en français</label>
-            <input type="text" id="g${i}-titleFr" value="${esc(g.titleFr)}">
-          </div>
-          <div class="f-group">
-            <label><span class="lang-tag ar-tag">عر</span> الوصف بالعربية</label>
-            <input type="text" id="g${i}-descAr" value="${esc(g.descAr)}">
-          </div>
-          <div class="f-group">
-            <label><span class="lang-tag fr-tag">FR</span> Description en français</label>
-            <input type="text" id="g${i}-descFr" value="${esc(g.descFr)}">
-          </div>
-          <div class="f-group">
-            <label>التصنيف / Catégorie</label>
-            <select id="g${i}-cat">
-              <option value="crack" ${g.cat==='crack'?'selected':''}>شقوق / Fissures</option>
-              <option value="hum"   ${g.cat==='hum'  ?'selected':''}>رطوبة / Humidité</option>
-              <option value="con"   ${g.cat==='con'  ?'selected':''}>خرسانة / Béton</option>
-              <option value="wall"  ${g.cat==='wall' ?'selected':''}>جدران / Murs</option>
-            </select>
-          </div>
-        </div>
-      </div>
-    </div>`).join('');
+function vTexts(){
+  const used=new Set();
+  const root=h('div',null);
+  const groups=GROUPS.map(([name,re])=>[name,Object.keys(W.texts).filter(k=>re.test(k)&&!used.has(k)).map(k=>(used.add(k),k))]);
+  const other=Object.keys(W.texts).filter(k=>!used.has(k));
+  if(other.length) groups.push(['Other',other]);
+  groups.forEach(([name,keys])=>{
+    if(!keys.length) return;
+    const card=h('div',{class:'card'},h('h3',null,name));
+    keys.forEach(k=>{
+      const t=W.texts[k];
+      t[AL]=t[AL]||'';
+      const multi=(t.en||'').length>70||(t.ar||'').length>70;
+      card.append(h('div',{class:'ltxt'},
+        h('code',null,k),
+        bind(multi?h('textarea',{value:t[AL]}):h('input',{type:'text',value:t[AL]}),v=>t[AL]=v),
+        HINTS[k]?h('small',{class:'hint'},HINTS[k]):null
+      ));
+    });
+    root.append(card);
+  });
+  return root;
 }
 
-/* ---- TRUST ---- */
-function buildTrustList(){
-  const list = document.getElementById('trustList');
-  list.innerHTML = D.trust.map((t, i) => `
-    <div class="item-card">
-      <div class="item-header" onclick="toggleItem(this)">
-        <div class="item-header-left">
-          <div class="item-num">${i+1}</div>
-          <div class="item-title"><i class="${t.icon}" style="color:var(--orange);margin-left:6px"></i>${t.titleAr} <small>/ ${t.titleFr}</small></div>
-        </div>
-        <i class="fas fa-chevron-down chevron"></i>
-      </div>
-      <div class="item-body">
-        <div class="form-grid">
-          <div class="f-group">
-            <label><span class="lang-tag ar-tag">عر</span> العنوان بالعربية</label>
-            <input type="text" id="t${i}-titleAr" value="${esc(t.titleAr)}">
-          </div>
-          <div class="f-group">
-            <label><span class="lang-tag fr-tag">FR</span> Titre en français</label>
-            <input type="text" id="t${i}-titleFr" value="${esc(t.titleFr)}">
-          </div>
-          <div class="f-group">
-            <label><span class="lang-tag ar-tag">عر</span> الوصف بالعربية</label>
-            <textarea id="t${i}-descAr">${esc(t.descAr)}</textarea>
-          </div>
-          <div class="f-group">
-            <label><span class="lang-tag fr-tag">FR</span> Description en français</label>
-            <textarea id="t${i}-descFr">${esc(t.descFr)}</textarea>
-          </div>
-          <div class="f-group">
-            <label>أيقونة / Icône (Font Awesome class)</label>
-            <input type="text" id="t${i}-icon" value="${esc(t.icon)}" placeholder="fas fa-user-tie">
-          </div>
-        </div>
-      </div>
-    </div>`).join('');
+function vProducts(){
+  const root=h('div',null);
+  W.products.forEach((p,i)=>{
+    const cats=h('div',{class:'cats'},CATS.map(([v,l])=>{
+      const cb=h('input',{type:'checkbox',checked:p.cats.includes(v)});
+      cb.addEventListener('change',()=>{ p.cats=p.cats.filter(x=>x!==v); if(cb.checked) p.cats.push(v); persist(); });
+      return h('label',{class:'chk'},cb,l);
+    }));
+    root.append(h('div',{class:'item'},
+      h('div',{class:'item-h'},h('b',null,p.name||'(no name)'),h('span',{class:'tag'},p.brand||''),
+        h('button',{class:'btn sm',onclick:()=>move(W.products,i,-1),title:'Move up'},'↑'),
+        h('button',{class:'btn sm',onclick:()=>move(W.products,i,1),title:'Move down'},'↓'),
+        h('button',{class:'btn sm danger',onclick:()=>{ if(confirm('Delete this product?')){ W.products.splice(i,1); persist(); render(); } }},'Delete')),
+      h('div',{class:'grid2'},
+        F('Product name',txt(p,'name')),
+        F('Brand',txt(p,'brand')),
+        F('Photo',imgPick(p,'image')),
+        chk(p,'isNew','Show a "New" badge')
+      ),
+      h('div',{class:'f',style:'margin-top:12px'},'Shown under these filters',cats),
+      h('div',{class:'grid2',style:'margin-top:12px'},
+        F(`Short description — ${LANG_NAMES[AL]}`,lt(p,'kind',false)),
+        F(`Details — ${LANG_NAMES[AL]}`,lt(p,'desc',true))
+      )
+    ));
+  });
+  root.append(h('button',{class:'btn pri',onclick:()=>{ W.products.push({id:slug('product'),name:'New product',brand:'Granitex',cats:['concrete'],image:IMAGES[0],isNew:false,kind:{ar:'',fr:'',en:''},desc:{ar:'',fr:'',en:''}}); persist(); render(); }},'+ Add product'));
+  return root;
 }
 
-/* =====================================================
-   COLLECT DATA FROM FORM FIELDS
-   ===================================================== */
-function collectData(){
-  D.whatsapp = getV('g-whatsapp');
-  D.phone    = getV('g-phone');
-  D.facebook = getV('g-facebook');
-  D.address  = getV('g-address');
-  D.hours    = getV('g-hours');
-  D.mapurl   = getV('g-mapurl');
-  D.hero.tagAr = getV('h-tagAr');
-  D.hero.tagFr = getV('h-tagFr');
-  D.hero.s1    = +getV('h-s1');
-  D.hero.s2    = +getV('h-s2');
-  D.hero.s3    = +getV('h-s3');
-
-  D.services = D.services.map((_,i) => ({
-    icon:    getV(`s${i}-icon`),
-    titleAr: getV(`s${i}-titleAr`),
-    titleFr: getV(`s${i}-titleFr`),
-    descAr:  getV(`s${i}-descAr`),
-    descFr:  getV(`s${i}-descFr`),
-    tag:     getV(`s${i}-tag`)
-  }));
-
-  D.products = D.products.map((_,i) => ({
-    emoji:   getV(`p${i}-emoji`),
-    bg:      getV(`p${i}-bg`),
-    titleAr: getV(`p${i}-titleAr`),
-    titleFr: getV(`p${i}-titleFr`),
-    useAr:   getV(`p${i}-useAr`),
-    useFr:   getV(`p${i}-useFr`),
-    badge:   getV(`p${i}-badge`)
-  }));
-
-  D.gallery = D.gallery.map((_,i) => ({
-    cat:     getV(`g${i}-cat`),
-    img1:    getV(`g${i}-img1`),
-    img2:    getV(`g${i}-img2`),
-    titleAr: getV(`g${i}-titleAr`),
-    titleFr: getV(`g${i}-titleFr`),
-    descAr:  getV(`g${i}-descAr`),
-    descFr:  getV(`g${i}-descFr`)
-  }));
-
-  D.trust = D.trust.map((_,i) => ({
-    icon:    getV(`t${i}-icon`),
-    titleAr: getV(`t${i}-titleAr`),
-    titleFr: getV(`t${i}-titleFr`),
-    descAr:  getV(`t${i}-descAr`),
-    descFr:  getV(`t${i}-descFr`)
-  }));
-
-  D.counters = [
-    +getV('ctr-1'), +getV('ctr-2'),
-    +getV('ctr-3'), +getV('ctr-4')
-  ];
+function vBrands(){
+  const root=h('div',null);
+  W.brands.forEach((b,i)=>{
+    root.append(h('div',{class:'item'},
+      h('div',{class:'item-h'},h('b',null,b.name||'(no name)'),h('span',{class:'tag'},b.brand||''),
+        h('button',{class:'btn sm',onclick:()=>move(W.brands,i,-1),title:'Move up'},'↑'),
+        h('button',{class:'btn sm',onclick:()=>move(W.brands,i,1),title:'Move down'},'↓'),
+        h('button',{class:'btn sm danger',onclick:()=>{ if(confirm('Delete this brand card?')){ W.brands.splice(i,1); persist(); render(); } }},'Delete')),
+      h('div',{class:'grid2'},
+        F('Title on the card',txt(b,'name')),
+        F('Brand',txt(b,'brand')),
+        F('Photo',imgPick(b,'image')),
+        chk(b,'fit','Show the whole photo (packaging on white)')
+      ),
+      h('div',{class:'grid2',style:'margin-top:12px'},F(`Short description — ${LANG_NAMES[AL]}`,lt(b,'kind',false)))
+    ));
+  });
+  root.append(h('button',{class:'btn pri',onclick:()=>{ W.brands.push({id:slug('brand'),name:'New product',brand:'Brand',image:IMAGES[0],fit:true,kind:{ar:'',fr:'',en:''}}); persist(); render(); }},'+ Add brand card'));
+  return root;
 }
 
-/* =====================================================
-   SAVE
-   ===================================================== */
-function saveAll(){
-  collectData();
-  localStorage.setItem('sc_data', JSON.stringify(D));
-  hasUnsaved = false;
-  document.getElementById('unsavedBadge').style.display = 'none';
-  showToast('تم حفظ جميع التغييرات بنجاح ✓', 'success');
+const VIEWS={overview:['Overview',vOverview],contact:['Contact & address',vContact],images:['Images',vImages],texts:['Website text',vTexts],products:['Products',vProducts],brands:['Brands on shelves',vBrands]};
+
+function render(){
+  const [title,fn]=VIEWS[VIEW];
+  $('#ttl').textContent=title;
+  document.querySelectorAll('.nv').forEach(b=>b.setAttribute('aria-current',b.dataset.v===VIEW));
+  document.querySelectorAll('[data-al]').forEach(b=>b.setAttribute('aria-pressed',b.dataset.al===AL));
+  $('#view').replaceChildren(fn());
+  $('#banner').replaceChildren(...(fromDraft?[h('div',{class:'banner'},'You have unsaved changes from a previous session. They are still stored in this browser.',h('button',{class:'btn sm',onclick:discard},'Discard them'))]:[]));
+  setState();
 }
 
-/* =====================================================
-   TOAST
-   ===================================================== */
-function showToast(msg, type='success'){
-  const t = document.getElementById('toast');
-  document.getElementById('toastMsg').textContent = msg;
-  t.className = 'show ' + type;
-  clearTimeout(t._tid);
-  t._tid = setTimeout(() => t.className = '', 3000);
+function fileText(){
+  return `/* Solution Chantier — site content. Edit with admin.html, then replace this file and push. */\nwindow.SC_CONTENT = ${JSON.stringify(W,null,2)};\n`;
+}
+function download(){
+  const url=URL.createObjectURL(new Blob([fileText()],{type:'text/javascript;charset=utf-8'}));
+  const a=h('a',{href:url,download:'content.js'});
+  document.body.append(a); a.click(); a.remove();
+  setTimeout(()=>URL.revokeObjectURL(url),1000);
+  saved=true; setState();
+}
+function discard(){
+  if(!confirm('Discard all changes and go back to the published content?')) return;
+  try{ localStorage.removeItem('sc_draft'); }catch(e){}
+  W=clone(SRC); fromDraft=false; saved=false; render();
+}
+function importFile(file){
+  const r=new FileReader();
+  r.onload=()=>{
+    try{
+      const d=new Function('window',r.result+'\nreturn window.SC_CONTENT;')({});
+      if(!valid(d)) throw new Error('not a content file');
+      W=clone(d); persist(); render(); alert('Imported. Review it, then download content.js.');
+    }catch(e){ alert('This file is not a valid content.js file.'); }
+  };
+  r.readAsText(file,'utf-8');
 }
 
-/* =====================================================
-   NAVIGATION
-   ===================================================== */
-const TITLES = {
-  general:  '<i class="fas fa-cog" style="color:var(--orange)"></i> الإعدادات العامة',
-  hero:     '<i class="fas fa-home" style="color:var(--orange)"></i> الصفحة الرئيسية Hero',
-  services: '<i class="fas fa-tools" style="color:var(--orange)"></i> الخدمات',
-  products: '<i class="fas fa-box-open" style="color:var(--orange)"></i> المنتجات',
-  gallery:  '<i class="fas fa-images" style="color:var(--orange)"></i> المعرض',
-  trust:    '<i class="fas fa-award" style="color:var(--orange)"></i> لماذا نحن + العدادات',
-  password: '<i class="fas fa-lock" style="color:var(--orange)"></i> كلمة المرور والأمان'
-};
+document.querySelectorAll('.nv').forEach(b=>b.addEventListener('click',()=>{ VIEW=b.dataset.v; render(); }));
+document.querySelectorAll('[data-al]').forEach(b=>b.addEventListener('click',()=>{ AL=b.dataset.al; render(); }));
+$('#dl').addEventListener('click',download);
+$('#preview').addEventListener('click',()=>{ persist(); window.open('index.html?preview=1','_blank','noopener'); });
+$('#imp').addEventListener('change',e=>{ if(e.target.files[0]) importFile(e.target.files[0]); e.target.value=''; });
 
-function showSection(name, btn){
-  document.querySelectorAll('.section-panel').forEach(p => p.classList.remove('active'));
-  document.querySelectorAll('.sb-link').forEach(b => b.classList.remove('active'));
-  document.getElementById('sec-' + name).classList.add('active');
-  btn.classList.add('active');
-  document.getElementById('pageTitle').innerHTML = TITLES[name] || name;
-}
-
-/* =====================================================
-   ACCORDION TOGGLE
-   ===================================================== */
-function toggleItem(header){
-  const body = header.nextElementSibling;
-  const isOpen = body.classList.contains('open');
-  body.classList.toggle('open', !isOpen);
-  header.classList.toggle('expanded', !isOpen);
-}
-
-/* =====================================================
-   HELPERS
-   ===================================================== */
-function esc(s){ return String(s||'').replace(/"/g,'&quot;').replace(/</g,'&lt;').replace(/>/g,'&gt;'); }
-
-/* Unsaved warning on page unload */
-window.addEventListener('beforeunload', e => {
-  if(hasUnsaved){ e.preventDefault(); e.returnValue = ''; }
-});
+IMAGES.forEach(s=>$('#imgs').append(h('option',{value:s})));
+const bar=document.querySelector('.top');
+bar.append(h('button',{class:'btn',onclick:()=>navigator.clipboard&&navigator.clipboard.writeText(fileText()).then(()=>alert('Copied content.js to the clipboard.'))},'Copy'));
+bar.append(h('button',{class:'btn',onclick:()=>$('#imp').click()},'Import'));
+bar.append(h('button',{class:'btn danger',onclick:discard},'Discard draft'));
+render();
 </script>
 </body>
 </html>
