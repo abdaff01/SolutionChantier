@@ -113,7 +113,7 @@ window.SC_CONTENT = {
     c_share_more: { ar: "مشاركة على تيك توك وغيره", fr: "Partager sur TikTok et plus", en: "Share on TikTok & more" },
     c_share_copied: { ar: "تم نسخ الرابط!", fr: "Lien copié !", en: "Link copied!" },
     c_hours_l: { ar: "أيام الفتح", fr: "Jours d'ouverture", en: "Open days" },
-    c_hours: { ar: "كل أيام الأسبوع، تواصلوا معنا عبر واتساب للتأكد من التوفر.", fr: "Tous les jours de la semaine. Contactez-nous sur WhatsApp pour confirmer la disponibilité.", en: "Every day of the week. Message us on WhatsApp to confirm availability." },
+    c_hours: { ar: "كل أيام الأسبوع ما عدا يوم الجمعة (مغلق).", fr: "Tous les jours sauf le vendredi (fermé).", en: "Open every day except Friday (closed)." },
     c_back: { ar: "العودة إلى الموقع", fr: "Retour au site", en: "Back to the site" },
     c_scan: { ar: "امسح للوصول إلى هذه الصفحة", fr: "Scannez pour accéder à cette page", en: "Scan to open this page" },
     c_save: { ar: "حفظ كجهة اتصال", fr: "Enregistrer le contact", en: "Save contact" },
