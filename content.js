@@ -13,10 +13,11 @@ window.SC_CONTENT = {
       en: "Touati Abdelkader Street (before the Chaouch bend), Adrar, Algeria"
     },
     mapQuery: {
-      ar: "شارع تواتي عبد القادر أدرار الجزائر",
-      fr: "Rue Touati Abdelkader Adrar Algérie",
-      en: "Touati Abdelkader Street Adrar Algeria"
-    }
+      ar: "Solution Chantier, Rue El Touti Abdelkader, Adrar 01000",
+      fr: "Solution Chantier, Rue El Touti Abdelkader, Adrar 01000",
+      en: "Solution Chantier, Rue El Touti Abdelkader, Adrar 01000"
+    },
+    mapsLink: "https://maps.app.goo.gl/4TjtdY9LbSnmFC1XA"
   },
   images: {
     logo: "images/logo.jpg",

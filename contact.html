@@ -185,13 +185,6 @@ footer{background:var(--navy-2);color:rgba(255,255,255,.6);text-align:center;pad
           </div>
         </div>
       </div>
-      <div class="card">
-        <span class="ic mail"><i class="fas fa-envelope"></i></span>
-        <div class="body">
-          <small data-i18n="c_email_l"></small>
-          <div class="val"><a data-email href="#" class="ltr"></a></div>
-        </div>
-      </div>
       <div class="card full">
         <span class="ic pin"><i class="fas fa-location-dot"></i></span>
         <div class="body">
@@ -200,6 +193,13 @@ footer{background:var(--navy-2);color:rgba(255,255,255,.6);text-align:center;pad
           <div class="actions">
             <a class="btn btn-navy btn-sm" id="dir" href="#" target="_blank" rel="noopener"><i class="fas fa-diamond-turn-right"></i><span data-i18n="v_dir"></span></a>
           </div>
+        </div>
+      </div>
+      <div class="card">
+        <span class="ic mail"><i class="fas fa-envelope"></i></span>
+        <div class="body">
+          <small data-i18n="c_email_l"></small>
+          <div class="val"><a data-email href="#" class="ltr"></a></div>
         </div>
       </div>
       <div class="card">
@@ -280,7 +280,7 @@ function apply(){
   $$('[data-tt]').forEach(a=>a.href=C.contact.tiktok);
   $$('[data-img=logo]').forEach(i=>i.src=C.images.logo);
   const q=encodeURIComponent(C.contact.mapQuery[L]);
-  $('#dir').href=`https://www.google.com/maps/search/?api=1&query=${q}`;
+  $('#dir').href=C.contact.mapsLink||`https://www.google.com/maps/search/?api=1&query=${q}`;
   $('#mapf').src=`https://www.google.com/maps?q=${q}&hl=${L}&output=embed`;
   refreshVcard();
   const pageUrl=location.href.split('#')[0];
