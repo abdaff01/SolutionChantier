@@ -209,6 +209,13 @@ footer{background:var(--navy-2);color:rgba(255,255,255,.72);padding:54px 0 26px}
 .dock .t.show{opacity:1;pointer-events:auto}
 @keyframes pulse{0%{box-shadow:0 8px 22px rgba(0,0,0,.3),0 0 0 0 rgba(37,211,102,.55)}70%{box-shadow:0 8px 22px rgba(0,0,0,.3),0 0 0 16px rgba(37,211,102,0)}100%{box-shadow:0 8px 22px rgba(0,0,0,.3),0 0 0 0 rgba(37,211,102,0)}}
 
+.mascot{position:fixed;inset-inline-start:12px;bottom:10px;width:124px;height:124px;z-index:60;cursor:pointer;filter:drop-shadow(0 8px 14px rgba(0,0,0,.35));transition:transform .2s var(--ease);-webkit-tap-highlight-color:transparent}
+.mascot:hover{transform:translateY(-4px)}
+.mascot-sprite{width:100%;height:100%;background:url(images/mascot/kamran-directions.webp) 50% 50%/300% 300% no-repeat}
+.mascot.poke{animation:mascotSquash .35s ease}
+@keyframes mascotSquash{0%,100%{transform:scale(1)}40%{transform:scale(1.12,.88)}}
+@media (max-width:640px){.mascot{width:92px;height:92px;inset-inline-start:6px;bottom:8px}}
+
 .js .rv{opacity:0;transform:translateY(28px);transition:opacity .75s var(--ease) var(--d,0s),transform .75s var(--ease) var(--d,0s)}
 .js .rv.in{opacity:1;transform:none}
 
@@ -462,6 +469,8 @@ footer{background:var(--navy-2);color:rgba(255,255,255,.72);padding:54px 0 26px}
   <a class="w" data-wa="generic" href="#" target="_blank" rel="noopener" aria-label="WhatsApp"><i class="fab fa-whatsapp"></i></a>
 </div>
 
+<div class="mascot" id="mascot" aria-hidden="true"><div class="mascot-sprite" id="mascotSprite"></div></div>
+
 <noscript><p style="padding:20px;text-align:center">JavaScript is required to display this site.</p></noscript>
 
 <script>
@@ -581,6 +590,28 @@ addEventListener('scroll',()=>{
   $$('#nav a').forEach(a=>a.classList.toggle('on',a.getAttribute('href')==='#'+cur));
 },{passive:true});
 toTop.addEventListener('click',()=>scrollTo({top:0,behavior:'smooth'}));
+
+const mascot=$('#mascot');
+if(mascot){
+  const sp=$('#mascotSprite'), DIR='images/mascot/kamran-directions.webp', REA='images/mascot/kamran-reactions.webp';
+  [DIR,REA].forEach(u=>{ new Image().src=u; });
+  const show=(img,i)=>{ sp.style.backgroundImage=`url(${img})`; sp.style.backgroundPosition=`${(i%3)*50}% ${Math.floor(i/3)*50}%`; };
+  let look=4, busy=false, last=-1;
+  mascot.addEventListener('click',()=>{
+    let k; do{ k=Math.floor(Math.random()*9); }while(k===last); last=k;
+    busy=true; show(REA,k);
+    mascot.classList.remove('poke'); void mascot.offsetWidth; mascot.classList.add('poke');
+    setTimeout(()=>{ busy=false; show(DIR,look); },1100);
+  });
+  mascot.addEventListener('animationend',()=>mascot.classList.remove('poke'));
+  if(matchMedia('(pointer:fine)').matches){
+    addEventListener('mousemove',e=>{
+      const r=mascot.getBoundingClientRect(), dx=e.clientX-(r.left+r.width/2), dy=e.clientY-(r.top+r.height/2), d=Math.hypot(dx,dy);
+      const col=d<90?1:(dx/d<-.38?0:dx/d>.38?2:1), row=d<90?1:(dy/d<-.38?0:dy/d>.38?2:1), i=row*3+col;
+      if(i!==look){ look=i; if(!busy) show(DIR,look); }
+    },{passive:true});
+  }
+}
 </script>
 </body>
 </html>
