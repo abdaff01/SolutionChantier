@@ -33,6 +33,7 @@ window.SC_CONTENT = {
     nav_brands: { ar: "العلامات التجارية", fr: "Marques", en: "Brands" },
     nav_help: { ar: "استشارة", fr: "Conseil", en: "Advice" },
     nav_visit: { ar: "زوروا المتجر", fr: "Nous trouver", en: "Visit us" },
+    nav_contact: { ar: "تواصل معنا", fr: "Contact", en: "Contact" },
     cta_wa: { ar: "واتساب", fr: "WhatsApp", en: "WhatsApp" },
     hero_eyebrow: { ar: "متجر مواد البناء · أدرار", fr: "Magasin de matériaux · Adrar", en: "Building materials store · Adrar" },
     hero_t1: { ar: "حلول تقنية", fr: "Des solutions techniques", en: "Technical solutions" },

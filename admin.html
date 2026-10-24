@@ -35,7 +35,7 @@ main{padding:22px 28px 60px;min-width:0}
 .card h3{margin:0 0 14px;font-size:1.05rem}
 .grid2{display:grid;grid-template-columns:1fr 1fr;gap:14px 18px}
 .f{display:grid;gap:6px;font-size:.88rem;font-weight:600;color:var(--ink)}
-input[type=text],input[type=url],textarea{font:inherit;font-weight:400;width:100%;padding:9px 11px;border:1px solid var(--line);border-radius:9px;background:#fff;color:var(--ink)}
+input[type=text],input[type=url],input[type=password],textarea{font:inherit;font-weight:400;width:100%;padding:9px 11px;border:1px solid var(--line);border-radius:9px;background:#fff;color:var(--ink)}
 input:focus,textarea:focus{outline:2px solid var(--gold);outline-offset:0;border-color:transparent}
 textarea{min-height:70px;resize:vertical}
 .chk{display:flex;align-items:center;gap:8px;font-weight:600;font-size:.9rem}
@@ -59,9 +59,29 @@ textarea{min-height:70px;resize:vertical}
 .ltxt code{font-size:.75rem;color:var(--muted);font-weight:400}
 p.note{font-size:.92rem;margin:0 0 8px}
 @media (max-width:900px){body{grid-template-columns:1fr}aside{position:static;height:auto;flex-direction:row;flex-wrap:wrap}aside .foot{display:none}.grid2,.stats{grid-template-columns:1fr}}
+aside .lo{background:none;border:1px solid rgba(255,255,255,.28);color:rgba(255,255,255,.9);text-align:start;padding:9px 12px;border-radius:10px;font-weight:600;margin-top:12px}
+aside .lo:hover{background:rgba(255,255,255,.08)}
+html.locked aside,html.locked main,html.locked datalist{display:none!important}
+#gate{position:fixed;inset:0;z-index:50;background:var(--navy-2);display:grid;place-items:center;padding:16px}
+#gate[hidden]{display:none}
+#gate form{background:#fff;border-radius:14px;padding:28px;width:min(380px,100%);display:grid;gap:14px}
+#gate h1{margin:0;font-size:1.3rem}
+#gate p{margin:0;color:var(--muted);font-size:.92rem}
+#gate label{display:grid;gap:6px;font-size:.88rem;font-weight:600}
+#gate-err{color:#b3261e;font-weight:600;min-height:1.3em}
 </style>
+<script>document.documentElement.classList.add('locked')</script>
 </head>
 <body>
+<div id="gate" role="dialog" aria-modal="true" aria-labelledby="gate-t">
+  <form id="gate-form" autocomplete="on">
+    <div><h1 id="gate-t">Solutions Chantier</h1><p>Admin sign in</p></div>
+    <label>Username<input id="gate-u" name="username" type="text" autocomplete="username" autocapitalize="off" spellcheck="false" required></label>
+    <label>Password<input id="gate-p" name="password" type="password" autocomplete="current-password" required></label>
+    <button class="btn pri" type="submit">Sign in</button>
+    <p id="gate-err" role="alert"></p>
+  </form>
+</div>
 <aside>
   <h2>Solutions Chantier</h2>
   <button class="nv" data-v="overview">Overview</button>
@@ -70,6 +90,7 @@ p.note{font-size:.92rem;margin:0 0 8px}
   <button class="nv" data-v="texts">Website text</button>
   <button class="nv" data-v="products">Products</button>
   <button class="nv" data-v="brands">Brands on shelves</button>
+  <button class="lo" id="logout">Log out</button>
   <div class="foot">Changes are kept as a draft in this browser until you download content.js.</div>
 </aside>
 
@@ -90,6 +111,37 @@ p.note{font-size:.92rem;margin:0 0 8px}
 </main>
 
 <datalist id="imgs"></datalist>
+
+<script>
+/* Sign-in screen. The page is static, so this only hides the editor from casual visitors;
+   real protection is that changes reach the live site only through the GitHub repository. */
+(function(){
+  var HASH='d43d51ba5e078895a9e2400e4cc2f59319fe064443dd00e9e9f7c4377bbf2bcb',SALT='solution-chantier-admin-v1',ITER=150000,KEY='sc_admin_ok';
+  var root=document.documentElement,gate=document.getElementById('gate'),form=document.getElementById('gate-form'),err=document.getElementById('gate-err');
+  var fails=0,until=0;
+  function unlock(){root.classList.remove('locked');gate.hidden=true}
+  function hex(b){return Array.from(new Uint8Array(b),function(x){return x.toString(16).padStart(2,'0')}).join('')}
+  async function derive(u,p){
+    var enc=new TextEncoder(),k=await crypto.subtle.importKey('raw',enc.encode(u.trim().toLowerCase()+':'+p),'PBKDF2',false,['deriveBits']);
+    return hex(await crypto.subtle.deriveBits({name:'PBKDF2',hash:'SHA-256',salt:enc.encode(SALT),iterations:ITER},k,256));
+  }
+  try{if(sessionStorage.getItem(KEY)==='1')unlock()}catch(e){}
+  document.getElementById('logout').addEventListener('click',function(){try{sessionStorage.removeItem(KEY)}catch(e){}location.reload()});
+  form.addEventListener('submit',async function(e){
+    e.preventDefault();
+    if(!(window.crypto&&crypto.subtle)){err.textContent='Open this page over https or localhost to sign in.';return}
+    var wait=until-Date.now();
+    if(wait>0){err.textContent='Too many attempts. Try again in '+Math.ceil(wait/1000)+' s.';return}
+    err.textContent='';
+    var ok=(await derive(document.getElementById('gate-u').value,document.getElementById('gate-p').value))===HASH;
+    if(ok){try{sessionStorage.setItem(KEY,'1')}catch(e){}unlock();return}
+    document.getElementById('gate-p').value='';
+    if(++fails>=5){until=Date.now()+30000;fails=0;err.textContent='Too many attempts. Try again in 30 s.'}
+    else err.textContent='Wrong username or password.';
+  });
+  if(!gate.hidden)document.getElementById('gate-u').focus();
+})();
+</script>
 <input type="file" id="imp" accept=".js,text/javascript" hidden>
 
 <script>
