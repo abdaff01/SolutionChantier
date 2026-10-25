@@ -101,12 +101,9 @@ html:not([lang=ar]) .card small{text-transform:uppercase;letter-spacing:.08em}
 .map iframe{width:100%;height:100%;min-height:320px;border:0}
 .qr-card{background:#fff;border-radius:var(--r);box-shadow:var(--shadow);padding:30px;text-align:center}
 .qr-card p{color:var(--muted);font-size:.9rem}
-#qrHint{font-weight:700;color:var(--navy);font-size:.95rem;margin-bottom:10px}
-
-/* Tap-to-reveal QR: a canvas mosaic sampling the logo's own colours sits over the
-   real QR grid; a tap ripples each tile from its logo colour to a QR module. */
-.qr-reveal{display:inline-block;margin-bottom:14px;padding:9px;border:1px solid var(--line);border-radius:12px;background:#fff;cursor:pointer;-webkit-tap-highlight-color:transparent;line-height:0}
-.qr-reveal:hover{border-color:var(--gold)}
+/* Static QR, built at error-correction level H so the shop logo can sit as a
+   badge in the centre, with a faint copy of the logo showing through the gaps. */
+.qr-box{display:inline-block;margin-bottom:14px;padding:9px;border:1px solid var(--line);border-radius:12px;background:#fff;line-height:0}
 #qrCanvas{display:block;border-radius:4px}
 
 footer{background:var(--navy-2);color:rgba(255,255,255,.6);text-align:center;padding:26px 0;font-size:.85rem}
@@ -233,11 +230,10 @@ footer{background:var(--navy-2);color:rgba(255,255,255,.6);text-align:center;pad
     </div>
 
     <div class="qr-card">
-      <button type="button" class="qr-reveal" id="qrReveal" aria-pressed="false">
+      <div class="qr-box">
         <canvas id="qrCanvas" role="img"><img id="qrFallbackImg" alt=""></canvas>
-      </button>
-      <p id="qrHint"></p>
-      <p data-i18n="c_scan" style="margin-top:2px"></p>
+      </div>
+      <p data-i18n="c_scan"></p>
       <p class="ltr" style="margin-top:4px;font-weight:700;color:var(--navy)">solutionchantier.com/contact</p>
     </div>
   </div>
@@ -276,85 +272,59 @@ function refreshVcard(){
   else a.setAttribute('download','Solutions-Chantier.vcf');
 }
 
-// Tap-to-reveal QR: a canvas mosaic that rests as a pixel-art version of the logo
-// (sampling the logo's own colours per cell), then ripples from the centre outward,
-// each cell fading and popping from its logo colour into a real QR module.
+// Static, always-scannable QR: the logo sits as a fixed badge in the centre
+// (the standard branded-QR technique, safe here because the code is built at
+// error-correction level H) and a faint copy of the logo shows through the
+// small gaps between modules. No animation, no interaction — just the code.
 const QR_CELL=7, QR_URL='https://solutionchantier.com/contact';
-const reduceMotion=matchMedia('(prefers-reduced-motion: reduce)').matches;
-let qrDark=null, qrN=0, cells=[], dpr=Math.max(1,window.devicePixelRatio||1);
-let revealed=false, animStart=0, animDir=1, raf=null;
+let qrN=0, darkCells=[], dpr=Math.max(1,window.devicePixelRatio||1), hole=null, logoImg=null;
 
 function buildQrMatrix(){
-  const qr=qrcode(0,'M');
+  const qr=qrcode(0,'H');
   qr.addData(QR_URL);
   qr.make();
   qrN=qr.getModuleCount();
-  qrDark=Array.from({length:qrN},(_,y)=>Array.from({length:qrN},(_,x)=>qr.isDark(y,x)));
   $('#qrFallbackImg').src=qr.createDataURL(6,2);
-}
-function sampleLogo(img){
-  const off=document.createElement('canvas'); off.width=qrN; off.height=qrN;
-  const octx=off.getContext('2d');
-  octx.drawImage(img,0,0,qrN,qrN);
-  const data=octx.getImageData(0,0,qrN,qrN).data;
-  cells=[];
-  const cx=(qrN-1)/2, cy=(qrN-1)/2, maxDist=Math.hypot(cx,cy);
+  const holeSize=Math.round(qrN*0.24)|1; // force odd for a centred hole
+  const start=Math.round((qrN-holeSize)/2);
+  hole={x0:start,y0:start,x1:start+holeSize,y1:start+holeSize};
+  darkCells=[];
   for(let y=0;y<qrN;y++) for(let x=0;x<qrN;x++){
-    const i=(y*qrN+x)*4;
-    const dark=qrDark[y][x];
-    cells.push({
-      x,y,
-      from:[data[i],data[i+1],data[i+2]],
-      to: dark? [15,26,51] : [255,255,255],
-      delay: Math.hypot(x-cx,y-cy)/maxDist*520
-    });
+    if(x>=hole.x0&&x<hole.x1&&y>=hole.y0&&y<hole.y1) continue; // the logo badge covers this area
+    if(qr.isDark(y,x)) darkCells.push({x,y});
   }
 }
-function draw(progressFor){
+function draw(){
   const canvas=$('#qrCanvas'); const ctx=canvas.getContext('2d');
   const size=qrN*QR_CELL;
   canvas.width=size*dpr; canvas.height=size*dpr; canvas.style.width=size+'px'; canvas.style.height=size+'px';
   ctx.setTransform(dpr,0,0,dpr,0,0);
   ctx.fillStyle='#fff'; ctx.fillRect(0,0,size,size);
-  for(const c of cells){
-    const p=Math.max(0,Math.min(1,progressFor(c)));
-    const r=c.from[0]+(c.to[0]-c.from[0])*p, g=c.from[1]+(c.to[1]-c.from[1])*p, b=c.from[2]+(c.to[2]-c.from[2])*p;
-    const pop=1+0.22*Math.sin(Math.min(1,p*1.15)*Math.PI);
-    const cell=QR_CELL*0.92*pop;
+  if(logoImg){ ctx.save(); ctx.globalAlpha=.08; ctx.drawImage(logoImg,0,0,size,size); ctx.restore(); }
+  const cell=QR_CELL*0.92;
+  for(const c of darkCells){
     const cx=c.x*QR_CELL+QR_CELL/2, cy=c.y*QR_CELL+QR_CELL/2;
-    ctx.fillStyle=`rgb(${r|0},${g|0},${b|0})`;
+    ctx.fillStyle='rgb(15,26,51)';
     ctx.beginPath();
     if(ctx.roundRect) ctx.roundRect(cx-cell/2,cy-cell/2,cell,cell,cell*0.22);
     else ctx.rect(cx-cell/2,cy-cell/2,cell,cell);
     ctx.fill();
   }
+  if(logoImg){
+    const hx=hole.x0*QR_CELL, hy=hole.y0*QR_CELL, hw=(hole.x1-hole.x0)*QR_CELL, hh=(hole.y1-hole.y0)*QR_CELL;
+    const r=hw/2, cx=hx+hw/2, cy=hy+hh/2;
+    ctx.save();
+    ctx.beginPath(); ctx.arc(cx,cy,r+3,0,Math.PI*2); ctx.fillStyle='#fff'; ctx.fill();
+    ctx.beginPath(); ctx.arc(cx,cy,r,0,Math.PI*2); ctx.clip();
+    ctx.drawImage(logoImg,hx,hy,hw,hh);
+    ctx.restore();
+  }
 }
-function animate(ts){
-  if(!animStart) animStart=ts;
-  const t=ts-animStart;
-  const DUR=420;
-  draw(c=>animDir>0 ? (t-c.delay)/DUR : 1-(t-c.delay)/DUR);
-  const done=cells.every(c=>t-c.delay>=DUR);
-  if(done){ draw(()=>animDir>0?1:0); raf=null; return; }
-  raf=requestAnimationFrame(animate);
-}
-function startAnim(dir){
-  animDir=dir; animStart=0;
-  if(raf) cancelAnimationFrame(raf);
-  if(reduceMotion){ draw(()=>dir>0?1:0); return; }
-  raf=requestAnimationFrame(animate);
-}
-function toggleQr(){
-  revealed=!revealed;
-  $('#qrReveal').setAttribute('aria-pressed',revealed);
-  $('#qrHint').textContent=T(revealed?'c_qr_hide':'c_qr_tap');
-  startAnim(revealed?1:-1);
-}
-$('#qrReveal').addEventListener('click',toggleQr);
 buildQrMatrix();
+draw();
 (() => {
   const img=new Image();
-  img.onload=()=>{ sampleLogo(img); draw(()=>0); };
+  img.onload=()=>{ logoImg=img; draw(); };
   img.src=C.images.logo;
 })();
 
@@ -377,7 +347,6 @@ function apply(){
   refreshVcard();
   $('#qrFallbackImg').alt=T('c_scan');
   $('#qrCanvas').setAttribute('aria-label',T('c_scan'));
-  $('#qrHint').textContent=T($('#qrReveal').getAttribute('aria-pressed')==='true'?'c_qr_hide':'c_qr_tap');
   const pageUrl=location.href.split('#')[0];
   $('#shareFb').href=`https://www.facebook.com/sharer/sharer.php?u=${encodeURIComponent(pageUrl)}&quote=${encodeURIComponent(T('c_title'))}`;
   try{ localStorage.setItem('sc_lang',L); }catch(e){}

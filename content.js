@@ -118,8 +118,6 @@ window.SC_CONTENT = {
     c_hours: { ar: "كل أيام الأسبوع ما عدا يوم الجمعة (مغلق).", fr: "Tous les jours sauf le vendredi (fermé).", en: "Open every day except Friday (closed)." },
     c_back: { ar: "العودة إلى الموقع", fr: "Retour au site", en: "Back to the site" },
     c_scan: { ar: "امسح للوصول إلى هذه الصفحة", fr: "Scannez pour accéder à cette page", en: "Scan to open this page" },
-    c_qr_tap: { ar: "اضغط لإظهار رمز QR", fr: "Touchez pour révéler le QR", en: "Tap to reveal the QR code" },
-    c_qr_hide: { ar: "اضغط لإخفائه", fr: "Touchez pour le masquer", en: "Tap to hide it" },
     c_save: { ar: "حفظ كجهة اتصال", fr: "Enregistrer le contact", en: "Save contact" },
     ft_note: { ar: "Solutions Chantier متجر مستقل ولا يمثّل أي علامة تجارية. أسماء العلامات وصور المنتجات ملك لأصحابها.", fr: "Solutions Chantier est un magasin indépendant et ne représente aucune marque. Les noms de marques et les images de produits appartiennent à leurs propriétaires.", en: "Solutions Chantier is an independent store and does not represent any brand. Brand names and product images belong to their owners." },
     ft_rights: { ar: "© 2026 Solutions Chantier، أدرار. جميع الحقوق محفوظة.", fr: "© 2026 Solutions Chantier, Adrar. Tous droits réservés.", en: "© 2026 Solutions Chantier, Adrar. All rights reserved." },
