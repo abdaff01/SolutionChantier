@@ -12,6 +12,7 @@
 <link href="https://fonts.googleapis.com/css2?family=Barlow:wght@400;500;600&family=Barlow+Condensed:wght@600;700;800&family=Cairo:wght@400;600;700;800;900&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
 <script src="content.js"></script>
+<script src="vendor/qrcode.js"></script>
 <style>
 *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
 :root{
@@ -99,8 +100,14 @@ html:not([lang=ar]) .card small{text-transform:uppercase;letter-spacing:.08em}
 .map{border-radius:var(--r);overflow:hidden;box-shadow:var(--shadow);min-height:320px;margin-bottom:24px}
 .map iframe{width:100%;height:100%;min-height:320px;border:0}
 .qr-card{background:#fff;border-radius:var(--r);box-shadow:var(--shadow);padding:30px;text-align:center}
-.qr-card img{width:180px;height:180px;margin:0 auto 14px;border-radius:12px;border:1px solid var(--line)}
 .qr-card p{color:var(--muted);font-size:.9rem}
+#qrHint{font-weight:700;color:var(--navy);font-size:.95rem;margin-bottom:10px}
+
+/* Tap-to-reveal QR: a canvas mosaic sampling the logo's own colours sits over the
+   real QR grid; a tap ripples each tile from its logo colour to a QR module. */
+.qr-reveal{display:inline-block;margin-bottom:14px;padding:9px;border:1px solid var(--line);border-radius:12px;background:#fff;cursor:pointer;-webkit-tap-highlight-color:transparent;line-height:0}
+.qr-reveal:hover{border-color:var(--gold)}
+#qrCanvas{display:block;border-radius:4px}
 
 footer{background:var(--navy-2);color:rgba(255,255,255,.6);text-align:center;padding:26px 0;font-size:.85rem}
 
@@ -226,8 +233,11 @@ footer{background:var(--navy-2);color:rgba(255,255,255,.6);text-align:center;pad
     </div>
 
     <div class="qr-card">
-      <img src="images/qr-contact.png" alt="QR" width="180" height="180">
-      <p data-i18n="c_scan"></p>
+      <button type="button" class="qr-reveal" id="qrReveal" aria-pressed="false">
+        <canvas id="qrCanvas" role="img"><img id="qrFallbackImg" alt=""></canvas>
+      </button>
+      <p id="qrHint"></p>
+      <p data-i18n="c_scan" style="margin-top:2px"></p>
       <p class="ltr" style="margin-top:4px;font-weight:700;color:var(--navy)">solutionchantier.com/contact</p>
     </div>
   </div>
@@ -266,6 +276,88 @@ function refreshVcard(){
   else a.setAttribute('download','Solutions-Chantier.vcf');
 }
 
+// Tap-to-reveal QR: a canvas mosaic that rests as a pixel-art version of the logo
+// (sampling the logo's own colours per cell), then ripples from the centre outward,
+// each cell fading and popping from its logo colour into a real QR module.
+const QR_CELL=7, QR_URL='https://solutionchantier.com/contact';
+const reduceMotion=matchMedia('(prefers-reduced-motion: reduce)').matches;
+let qrDark=null, qrN=0, cells=[], dpr=Math.max(1,window.devicePixelRatio||1);
+let revealed=false, animStart=0, animDir=1, raf=null;
+
+function buildQrMatrix(){
+  const qr=qrcode(0,'M');
+  qr.addData(QR_URL);
+  qr.make();
+  qrN=qr.getModuleCount();
+  qrDark=Array.from({length:qrN},(_,y)=>Array.from({length:qrN},(_,x)=>qr.isDark(y,x)));
+  $('#qrFallbackImg').src=qr.createDataURL(6,2);
+}
+function sampleLogo(img){
+  const off=document.createElement('canvas'); off.width=qrN; off.height=qrN;
+  const octx=off.getContext('2d');
+  octx.drawImage(img,0,0,qrN,qrN);
+  const data=octx.getImageData(0,0,qrN,qrN).data;
+  cells=[];
+  const cx=(qrN-1)/2, cy=(qrN-1)/2, maxDist=Math.hypot(cx,cy);
+  for(let y=0;y<qrN;y++) for(let x=0;x<qrN;x++){
+    const i=(y*qrN+x)*4;
+    const dark=qrDark[y][x];
+    cells.push({
+      x,y,
+      from:[data[i],data[i+1],data[i+2]],
+      to: dark? [15,26,51] : [255,255,255],
+      delay: Math.hypot(x-cx,y-cy)/maxDist*520
+    });
+  }
+}
+function draw(progressFor){
+  const canvas=$('#qrCanvas'); const ctx=canvas.getContext('2d');
+  const size=qrN*QR_CELL;
+  canvas.width=size*dpr; canvas.height=size*dpr; canvas.style.width=size+'px'; canvas.style.height=size+'px';
+  ctx.setTransform(dpr,0,0,dpr,0,0);
+  ctx.fillStyle='#fff'; ctx.fillRect(0,0,size,size);
+  for(const c of cells){
+    const p=Math.max(0,Math.min(1,progressFor(c)));
+    const r=c.from[0]+(c.to[0]-c.from[0])*p, g=c.from[1]+(c.to[1]-c.from[1])*p, b=c.from[2]+(c.to[2]-c.from[2])*p;
+    const pop=1+0.22*Math.sin(Math.min(1,p*1.15)*Math.PI);
+    const cell=QR_CELL*0.92*pop;
+    const cx=c.x*QR_CELL+QR_CELL/2, cy=c.y*QR_CELL+QR_CELL/2;
+    ctx.fillStyle=`rgb(${r|0},${g|0},${b|0})`;
+    ctx.beginPath();
+    if(ctx.roundRect) ctx.roundRect(cx-cell/2,cy-cell/2,cell,cell,cell*0.22);
+    else ctx.rect(cx-cell/2,cy-cell/2,cell,cell);
+    ctx.fill();
+  }
+}
+function animate(ts){
+  if(!animStart) animStart=ts;
+  const t=ts-animStart;
+  const DUR=420;
+  draw(c=>animDir>0 ? (t-c.delay)/DUR : 1-(t-c.delay)/DUR);
+  const done=cells.every(c=>t-c.delay>=DUR);
+  if(done){ draw(()=>animDir>0?1:0); raf=null; return; }
+  raf=requestAnimationFrame(animate);
+}
+function startAnim(dir){
+  animDir=dir; animStart=0;
+  if(raf) cancelAnimationFrame(raf);
+  if(reduceMotion){ draw(()=>dir>0?1:0); return; }
+  raf=requestAnimationFrame(animate);
+}
+function toggleQr(){
+  revealed=!revealed;
+  $('#qrReveal').setAttribute('aria-pressed',revealed);
+  $('#qrHint').textContent=T(revealed?'c_qr_hide':'c_qr_tap');
+  startAnim(revealed?1:-1);
+}
+$('#qrReveal').addEventListener('click',toggleQr);
+buildQrMatrix();
+(() => {
+  const img=new Image();
+  img.onload=()=>{ sampleLogo(img); draw(()=>0); };
+  img.src=C.images.logo;
+})();
+
 function apply(){
   const h=document.documentElement; h.lang=L; h.dir=L==='ar'?'rtl':'ltr';
   document.title=T('c_title')+' — Solutions Chantier';
@@ -283,6 +375,9 @@ function apply(){
   $('#dir').href=C.contact.mapsLink||`https://www.google.com/maps/search/?api=1&query=${q}`;
   $('#mapf').src=`https://www.google.com/maps?q=${q}&hl=${L}&output=embed`;
   refreshVcard();
+  $('#qrFallbackImg').alt=T('c_scan');
+  $('#qrCanvas').setAttribute('aria-label',T('c_scan'));
+  $('#qrHint').textContent=T($('#qrReveal').getAttribute('aria-pressed')==='true'?'c_qr_hide':'c_qr_tap');
   const pageUrl=location.href.split('#')[0];
   $('#shareFb').href=`https://www.facebook.com/sharer/sharer.php?u=${encodeURIComponent(pageUrl)}&quote=${encodeURIComponent(T('c_title'))}`;
   try{ localStorage.setItem('sc_lang',L); }catch(e){}
